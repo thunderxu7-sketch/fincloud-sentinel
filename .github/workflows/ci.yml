@@ -1,0 +1,100 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  quality:
+    name: Code, tests, evals, and static export
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - uses: astral-sh/setup-uv@v7
+        with:
+          enable-cache: true
+      - run: npm ci
+      - run: uv sync --project services/ai-copilot --extra dev --locked
+      - run: npm run check
+      - uses: actions/upload-artifact@v4
+        with:
+          name: static-site
+          path: apps/web/out
+          if-no-files-found: error
+
+  platform:
+    name: Helm, Terraform, and Compose validation
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: azure/setup-helm@v4
+        with:
+          version: v3.19.0
+      - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.13.5
+      - run: helm lint infra/helm/fincloud-sentinel
+      - run: helm template sentinel infra/helm/fincloud-sentinel > /tmp/fincloud-sentinel.yaml
+      - run: terraform -chdir=infra/terraform/environments/demo fmt -check -recursive
+      - run: terraform -chdir=infra/terraform/environments/demo init -backend=false -input=false
+      - run: terraform -chdir=infra/terraform/environments/demo validate
+      - run: docker compose config --quiet
+
+  containers:
+    name: Build ${{ matrix.component }} image
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - component: web
+            dockerfile: apps/web/Dockerfile
+          - component: core-api
+            dockerfile: services/core-api/Dockerfile
+          - component: ai-copilot
+            dockerfile: services/ai-copilot/Dockerfile
+    steps:
+      - uses: actions/checkout@v4
+      - uses: docker/setup-buildx-action@v3
+      - uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: ${{ matrix.dockerfile }}
+          push: false
+          tags: fincloud-sentinel-${{ matrix.component }}:${{ github.sha }}
+          cache-from: type=gha,scope=${{ matrix.component }}
+          cache-to: type=gha,mode=max,scope=${{ matrix.component }}
+
+  security:
+    name: Secret, dependency, IaC, and filesystem scan
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with: { fetch-depth: 0 }
+      - uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - uses: aquasecurity/trivy-action@0.33.1
+        with:
+          scan-type: fs
+          scan-ref: .
+          severity: CRITICAL,HIGH
+          ignore-unfixed: true
+          exit-code: "1"

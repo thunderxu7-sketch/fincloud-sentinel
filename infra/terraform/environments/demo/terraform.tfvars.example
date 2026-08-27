@@ -1,0 +1,8 @@
+region      = "cn-hangzhou"
+environment = "demo"
+create_ack  = false
+
+tags = {
+  Owner      = "solution-architecture"
+  CostCenter = "poc"
+}

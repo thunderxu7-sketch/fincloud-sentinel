@@ -1,0 +1,73 @@
+name: fincloud-sentinel
+services:
+  web:
+    build:
+      context: .
+      dockerfile: apps/web/Dockerfile
+    ports: ["3000:8080"]
+    depends_on:
+      core-api: { condition: service_healthy }
+      ai-copilot: { condition: service_healthy }
+    read_only: true
+    tmpfs:
+      - /var/cache/nginx:uid=101,gid=101,mode=0755,size=32m
+      - /var/run:uid=101,gid=101,mode=0755,size=8m
+    security_opt: ["no-new-privileges:true"]
+
+  core-api:
+    build:
+      context: .
+      dockerfile: services/core-api/Dockerfile
+    ports: ["4000:4000"]
+    environment:
+      NODE_ENV: production
+      PORT: 4000
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:4000/readyz"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+    read_only: true
+    tmpfs: ["/tmp"]
+    security_opt: ["no-new-privileges:true"]
+
+  ai-copilot:
+    build:
+      context: .
+      dockerfile: services/ai-copilot/Dockerfile
+    ports: ["8000:8000"]
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/readyz')"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+    read_only: true
+    tmpfs: ["/tmp"]
+    security_opt: ["no-new-privileges:true"]
+
+  prometheus:
+    image: prom/prometheus:v3.7.3
+    command: ["--config.file=/etc/prometheus/prometheus.yml", "--storage.tsdb.path=/prometheus"]
+    volumes:
+      - ./observability/prometheus:/etc/prometheus:ro
+    tmpfs:
+      - /prometheus:uid=65534,gid=65534,mode=0755,size=256m
+    ports: ["9090:9090"]
+    depends_on: [core-api, ai-copilot]
+    security_opt: ["no-new-privileges:true"]
+
+  grafana:
+    image: grafana/grafana:12.3.1
+    environment:
+      GF_SECURITY_ADMIN_USER: admin
+      GF_SECURITY_ADMIN_PASSWORD: fincloud-demo
+      GF_AUTH_ANONYMOUS_ENABLED: "true"
+      GF_AUTH_ANONYMOUS_ORG_ROLE: Viewer
+    volumes:
+      - ./observability/grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./observability/grafana/dashboards:/var/lib/grafana/dashboards:ro
+    tmpfs:
+      - /var/lib/grafana:uid=472,gid=0,mode=0755,size=256m
+    ports: ["3001:3000"]
+    depends_on: [prometheus]
+    security_opt: ["no-new-privileges:true"]

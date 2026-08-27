@@ -1,0 +1,31 @@
+{{- if .Values.ingress.enabled }}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ include "fincloud.fullname" . }}
+  labels:
+    {{- include "fincloud.labels" . | nindent 4 }}
+  annotations:
+    {{- toYaml .Values.ingress.annotations | nindent 4 }}
+spec:
+  ingressClassName: {{ .Values.ingress.className }}
+  tls:
+    - hosts: [{{ .Values.ingress.host | quote }}]
+      secretName: {{ .Values.ingress.tlsSecretName }}
+  rules:
+    - host: {{ .Values.ingress.host | quote }}
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ include "fincloud.fullname" . }}-web
+                port: { name: http }
+          - path: /api/v1
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ include "fincloud.fullname" . }}-core-api
+                port: { name: http }
+{{- end }}

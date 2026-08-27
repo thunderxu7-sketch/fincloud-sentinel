@@ -1,0 +1,23 @@
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: /
+    schedule: { interval: weekly }
+    groups:
+      safe-minor-updates:
+        update-types: [minor, patch]
+  - package-ecosystem: pip
+    directory: /services/ai-copilot
+    schedule: { interval: weekly }
+  - package-ecosystem: github-actions
+    directory: /
+    schedule: { interval: weekly }
+  - package-ecosystem: docker
+    directory: /services/core-api
+    schedule: { interval: weekly }
+  - package-ecosystem: docker
+    directory: /services/ai-copilot
+    schedule: { interval: weekly }
+  - package-ecosystem: docker
+    directory: /apps/web
+    schedule: { interval: weekly }

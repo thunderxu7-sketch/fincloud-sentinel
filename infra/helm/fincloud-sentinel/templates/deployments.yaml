@@ -1,0 +1,72 @@
+{{- $root := . -}}
+{{- range $component, $config := dict "web" .Values.web "core-api" .Values.coreApi "ai-copilot" .Values.aiCopilot }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "fincloud.fullname" $root }}-{{ $component }}
+  labels:
+    {{- include "fincloud.labels" $root | nindent 4 }}
+    app.kubernetes.io/component: {{ $component }}
+spec:
+  replicas: {{ $config.replicaCount }}
+  strategy:
+    type: RollingUpdate
+    rollingUpdate: { maxUnavailable: 0, maxSurge: 1 }
+  selector:
+    matchLabels:
+      app.kubernetes.io/instance: {{ $root.Release.Name }}
+      app.kubernetes.io/component: {{ $component }}
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/instance: {{ $root.Release.Name }}
+        app.kubernetes.io/name: {{ include "fincloud.name" $root }}
+        app.kubernetes.io/component: {{ $component }}
+      annotations:
+        prometheus.io/scrape: {{ ternary "false" "true" (eq $component "web") | quote }}
+        prometheus.io/port: {{ $config.service.port | quote }}
+        prometheus.io/path: /metrics
+    spec:
+      serviceAccountName: {{ include "fincloud.serviceAccountName" $root }}
+      automountServiceAccountToken: false
+      securityContext:
+        runAsNonRoot: true
+        seccompProfile: { type: RuntimeDefault }
+      topologySpreadConstraints:
+        - maxSkew: 1
+          topologyKey: topology.kubernetes.io/zone
+          whenUnsatisfiable: ScheduleAnyway
+          labelSelector:
+            matchLabels:
+              app.kubernetes.io/instance: {{ $root.Release.Name }}
+              app.kubernetes.io/component: {{ $component }}
+      containers:
+        - name: {{ $component }}
+          image: "{{ $config.image.repository }}:{{ $config.image.tag }}"
+          imagePullPolicy: {{ $root.Values.global.imagePullPolicy }}
+          ports:
+            - name: http
+              containerPort: {{ $config.service.targetPort | default $config.service.port }}
+          envFrom:
+            - configMapRef: { name: {{ include "fincloud.fullname" $root }}-config }
+          readinessProbe:
+            httpGet:
+              path: {{ ternary "/" "/readyz" (eq $component "web") }}
+              port: http
+            initialDelaySeconds: 3
+            periodSeconds: 5
+          livenessProbe:
+            httpGet:
+              path: {{ ternary "/" "/healthz" (eq $component "web") }}
+              port: http
+            initialDelaySeconds: 10
+            periodSeconds: 10
+          resources:
+            {{- toYaml $config.resources | nindent 12 }}
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities: { drop: ["ALL"] }
+            readOnlyRootFilesystem: true
+      terminationGracePeriodSeconds: 30
+{{- end }}

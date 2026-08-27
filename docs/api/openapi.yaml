@@ -1,0 +1,204 @@
+openapi: 3.1.0
+info:
+  title: FinCloud Sentinel Core API
+  version: 0.1.0
+  description: Synthetic transaction assurance API. Never submit real funds, credentials, or PII.
+  license:
+    name: Apache License 2.0
+    identifier: Apache-2.0
+servers:
+  - url: http://localhost:4000
+    description: Local synthetic-data demo server
+security: []
+paths:
+  /healthz:
+    get:
+      summary: Check whether the process is alive
+      operationId: health
+      responses:
+        "200": { description: Service is alive }
+  /readyz:
+    get:
+      summary: Check whether dependencies are ready
+      operationId: readiness
+      responses:
+        "200": { description: Service is ready }
+  /metrics:
+    get:
+      summary: Export Prometheus metrics
+      operationId: metrics
+      responses:
+        "200": { description: Prometheus metrics }
+  /api/v1/transactions:
+    get:
+      summary: List synthetic transactions
+      operationId: listTransactions
+      responses:
+        "200":
+          description: Transactions sorted by creation time
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  items: { type: array, items: { $ref: "#/components/schemas/Transaction" } }
+                required: [items]
+    post:
+      summary: Create or replay an idempotent transaction
+      operationId: createTransaction
+      description: Creates one synthetic transaction or returns the original result for the same idempotency key.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/TransactionInput" }
+      responses:
+        "201":
+          description: Created
+          content: { application/json: { schema: { $ref: "#/components/schemas/CreateResult" } } }
+        "200":
+          description: Idempotent replay
+          content: { application/json: { schema: { $ref: "#/components/schemas/CreateResult" } } }
+        "400": { description: Validation failed }
+  /api/v1/transactions/{id}:
+    parameters:
+      - $ref: "#/components/parameters/TransactionId"
+    get:
+      summary: Get one transaction
+      operationId: getTransaction
+      responses:
+        "200": { description: Transaction, content: { application/json: { schema: { $ref: "#/components/schemas/Transaction" } } } }
+        "404": { description: Not found }
+  /api/v1/transactions/{id}/approve:
+    parameters: [{ $ref: "#/components/parameters/TransactionId" }]
+    post:
+      summary: Approve a transaction after risk review
+      operationId: approveRiskReview
+      description: Demo approval transition. Production requires authenticated two-person authorization.
+      responses:
+        "200": { description: Approved, content: { application/json: { schema: { $ref: "#/components/schemas/Transaction" } } } }
+        "409": { description: Invalid transition }
+  /api/v1/transactions/{id}/complete:
+    parameters: [{ $ref: "#/components/parameters/TransactionId" }]
+    post:
+      summary: Complete a transaction and post balanced ledger entries
+      operationId: completeTransaction
+      responses:
+        "200": { description: Completed with balanced ledger entries }
+        "409": { description: Invalid transition }
+  /api/v1/transactions/{id}/fail:
+    parameters: [{ $ref: "#/components/parameters/TransactionId" }]
+    post:
+      summary: Mark a transaction as failed
+      operationId: failTransaction
+      responses:
+        "200": { description: Marked failed }
+        "409": { description: Invalid transition }
+  /api/v1/ledger:
+    get:
+      summary: List append-only ledger entries
+      operationId: listLedger
+      responses:
+        "200": { description: Append-only synthetic ledger entries }
+  /api/v1/outbox:
+    get:
+      summary: List unpublished and published domain events
+      operationId: listOutbox
+      responses:
+        "200": { description: Domain events }
+  /api/v1/reconciliation:
+    post:
+      summary: Reconcile external settlement facts with the internal ledger
+      operationId: reconcile
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                settlements:
+                  type: array
+                  items: { $ref: "#/components/schemas/ChainSettlement" }
+              required: [settlements]
+      responses:
+        "200": { description: Reconciliation report }
+  /api/v1/incidents/simulate:
+    post:
+      summary: Generate a deterministic synthetic incident
+      operationId: simulateIncident
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                scenario: { enum: [CHAIN_DELAY, DUPLICATE_EVENT, LEDGER_MISMATCH, MODEL_TIMEOUT] }
+                transactionId: { type: string }
+              required: [scenario]
+      responses:
+        "200": { description: Deterministic synthetic incident }
+components:
+  parameters:
+    TransactionId:
+      name: id
+      in: path
+      required: true
+      schema: { type: string, format: uuid }
+  schemas:
+    TransactionInput:
+      type: object
+      additionalProperties: false
+      properties:
+        idempotencyKey: { type: string, minLength: 8, maxLength: 128 }
+        accountId: { type: string, minLength: 1, maxLength: 128 }
+        kind: { enum: [DEPOSIT, WITHDRAWAL] }
+        asset: { type: string, pattern: "^[A-Za-z0-9]{2,12}$" }
+        amount: { type: string, pattern: "^[0-9]+(\\.[0-9]{1,8})?$" }
+        address: { type: string, minLength: 8, maxLength: 256 }
+        country: { type: string, minLength: 2, maxLength: 2 }
+        newAddress: { type: boolean }
+        recentTransactionCount: { type: integer, minimum: 0, maximum: 10000 }
+      required: [idempotencyKey, accountId, kind, asset, amount, address]
+    Transaction:
+      type: object
+      properties:
+        id: { type: string }
+        idempotencyKey: { type: string }
+        accountId: { type: string }
+        kind: { enum: [DEPOSIT, WITHDRAWAL] }
+        asset: { type: string }
+        amount: { type: string }
+        amountAtomic: { type: string }
+        address: { type: string }
+        status: { enum: [RECEIVED, VALIDATING, RISK_REVIEW, APPROVED, BROADCASTING, CONFIRMING, COMPLETED, REJECTED, FAILED] }
+        riskLevel: { enum: [LOW, MEDIUM, HIGH, CRITICAL] }
+        riskScore: { type: integer }
+        riskReasons: { type: array, items: { type: string } }
+        createdAt: { type: string, format: date-time }
+        updatedAt: { type: string, format: date-time }
+        version: { type: integer }
+      required: [id, idempotencyKey, accountId, kind, asset, amount, amountAtomic, address, status, riskLevel, riskScore, riskReasons, createdAt, updatedAt, version]
+    CreateResult:
+      type: object
+      properties:
+        transaction: { $ref: "#/components/schemas/Transaction" }
+        risk:
+          type: object
+          properties:
+            level: { enum: [LOW, MEDIUM, HIGH, CRITICAL] }
+            action: { enum: [ALLOW, REVIEW, BLOCK] }
+            score: { type: integer }
+            reasons: { type: array, items: { type: string } }
+          required: [level, action, score, reasons]
+        replayed: { type: boolean }
+      required: [transaction, risk, replayed]
+    ChainSettlement:
+      type: object
+      properties:
+        transactionId: { type: string }
+        status: { enum: [CONFIRMED, PENDING, MISSING] }
+        amountAtomic: { type: string, pattern: "^[0-9]+$" }
+        confirmations: { type: integer, minimum: 0 }
+      required: [transactionId, status, amountAtomic, confirmations]

@@ -1,0 +1,22 @@
+groups:
+  - name: fincloud-slo
+    rules:
+      - alert: FinCloudApiHighErrorRate
+        expr: sum(rate(fincloud_transactions_total{result=~"blocked|failed"}[5m])) / clamp_min(sum(rate(fincloud_transactions_total[5m])), 1) > 0.05
+        for: 5m
+        labels: { severity: page }
+        annotations:
+          summary: Transaction error or block ratio is above 5%
+          runbook_url: docs/runbooks/incident-response.md
+      - alert: FinCloudApiP95LatencyBudget
+        expr: histogram_quantile(0.95, sum by (le) (rate(fincloud_http_request_duration_seconds_bucket[5m]))) > 0.25
+        for: 10m
+        labels: { severity: ticket }
+        annotations:
+          summary: Core API p95 is above the 250 ms budget
+      - alert: FinCloudCopilotP95LatencyBudget
+        expr: histogram_quantile(0.95, sum by (le) (rate(fincloud_copilot_request_duration_seconds_bucket[5m]))) > 2
+        for: 10m
+        labels: { severity: ticket }
+        annotations:
+          summary: Copilot p95 is above two seconds; deterministic fallback remains active

@@ -1,0 +1,46 @@
+[
+  {
+    "incident": {
+      "id": "eval-chain-delay",
+      "title": "Confirmation queue delay",
+      "severity": "SEV-2",
+      "symptom": "Withdrawals remain in CONFIRMING",
+      "metrics": {"rpc_error_rate": 0.18, "confirming_age_p95_seconds": 842},
+      "logExcerpt": ["rpc timeout after 3000ms"]
+    },
+    "expectedSource": "chain-confirmation-delay.md"
+  },
+  {
+    "incident": {
+      "id": "eval-ledger",
+      "title": "Ledger reconciliation mismatch",
+      "severity": "SEV-1",
+      "symptom": "External amount differs from ledger",
+      "metrics": {"reconciliation_mismatch_total": 1},
+      "logExcerpt": ["automatic settlement paused"]
+    },
+    "expectedSource": "ledger-reconciliation.md"
+  },
+  {
+    "incident": {
+      "id": "eval-duplicate",
+      "title": "Duplicate event delivery",
+      "severity": "SEV-3",
+      "symptom": "Broker delivered an event twice",
+      "metrics": {"duplicate_event_total": 17, "ledger_post_duplicate_total": 0},
+      "logExcerpt": ["inbox key already exists"]
+    },
+    "expectedSource": "duplicate-events.md"
+  },
+  {
+    "incident": {
+      "id": "eval-model",
+      "title": "Risk model timeout",
+      "severity": "SEV-2",
+      "symptom": "Inference exceeded latency budget",
+      "metrics": {"model_timeout_rate": 0.22, "model_latency_p95_ms": 4350},
+      "logExcerpt": ["circuit breaker opened"]
+    },
+    "expectedSource": "model-timeout.md"
+  }
+]

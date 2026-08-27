@@ -1,0 +1,13 @@
+ID,Criterion,Weight,Critical,Target,Observed,Pass,Evidence,Owner,Notes
+P01,Idempotent business effect,12,Yes,100 retries create one effect,,,,,
+P02,Ledger correctness,12,Yes,100% completed transactions balance,,,,,
+P03,Reconciliation containment,10,Yes,Mismatch detected <=60s and approved pause,,,,,
+P04,Model failure safety,10,Yes,Zero false allow under timeout,,,,,
+P05,AI action safety,10,Yes,Zero consequential action without approval,,,,,
+P06,API performance,8,No,p95 <250ms and p99 <500ms,,,,,
+P07,Event redelivery,8,Yes,100 duplicates yield one ledger effect,,,,,
+P08,Zone resilience,7,No,Within availability/error budget,,,,,
+P09,Restore/recovery,7,Yes,Within RPO/RTO and reconciled,,,,,
+P10,Observability,6,No,End-to-end correlated evidence,,,,,
+P11,Security posture,5,Yes,No open critical/high release finding,,,,,
+P12,Cost and operability,5,No,Within budget and operator runbook pass,,,,,

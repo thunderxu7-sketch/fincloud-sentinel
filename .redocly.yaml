@@ -1,0 +1,8 @@
+extends:
+  - recommended
+
+rules:
+  # This reference API intentionally documents a localhost-only synthetic demo.
+  no-server-example.com: off
+  # Read-only health, metrics, and evidence endpoints do not have meaningful 4xx outcomes.
+  operation-4xx-response: off

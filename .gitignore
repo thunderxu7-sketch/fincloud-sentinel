@@ -1,0 +1,42 @@
+# dependencies and builds
+node_modules/
+.next/
+out/
+dist/
+coverage/
+*.tsbuildinfo
+
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+
+# local state and secrets
+.env
+.env.*
+!.env.example
+data/
+*.db
+*.sqlite
+*.log
+
+# Terraform
+.terraform/
+*.tfstate
+*.tfstate.*
+*.tfplan
+crash.log
+
+# editors and OS
+.DS_Store
+.idea/
+.vscode/
+
+# generated artifacts
+artifacts/
+.artifact-build/
+playwright-report/
+test-results/
+*.inspect.ndjson
+docs/presales/FinCloud-Sentinel-Executive-Deck/

@@ -1,0 +1,20 @@
+{{- $root := . -}}
+{{- range $component, $config := dict "web" .Values.web "core-api" .Values.coreApi "ai-copilot" .Values.aiCopilot }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "fincloud.fullname" $root }}-{{ $component }}
+  labels:
+    {{- include "fincloud.labels" $root | nindent 4 }}
+    app.kubernetes.io/component: {{ $component }}
+spec:
+  selector:
+    app.kubernetes.io/instance: {{ $root.Release.Name }}
+    app.kubernetes.io/component: {{ $component }}
+  ports:
+    - name: http
+      port: {{ $config.service.port }}
+      targetPort: http
+  type: ClusterIP
+{{- end }}

@@ -1,0 +1,22 @@
+name: Bug report
+description: Report reproducible behavior using synthetic data only.
+title: "bug: "
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: Never include secrets, real customer data, or real fund/wallet details.
+  - type: textarea
+    id: behavior
+    attributes:
+      label: Observed and expected behavior
+    validations: { required: true }
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Synthetic reproduction
+    validations: { required: true }
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Sanitized evidence

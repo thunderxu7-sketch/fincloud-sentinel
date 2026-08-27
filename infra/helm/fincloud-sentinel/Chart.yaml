@@ -1,0 +1,15 @@
+apiVersion: v2
+name: fincloud-sentinel
+description: Cloud-native fintech transaction assurance and AI operations copilot
+type: application
+version: 0.1.0
+appVersion: "0.1.0"
+home: https://github.com/thunderxu7-sketch/fincloud-sentinel
+icon: https://thunderxu7-sketch.github.io/fincloud-sentinel/icon.svg
+sources:
+  - https://github.com/thunderxu7-sketch/fincloud-sentinel
+maintainers:
+  - name: Gray Xu
+    email: thunderxu7@gmail.com
+annotations:
+  artifacthub.io/license: Apache-2.0

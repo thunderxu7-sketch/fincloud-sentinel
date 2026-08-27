@@ -1,0 +1,35 @@
+{
+  "name": "fincloud-sentinel",
+  "version": "0.1.0",
+  "private": true,
+  "description": "A cloud-native fintech transaction assurance and AI operations reference solution.",
+  "author": "Gray Xu <thunderxu7@gmail.com>",
+  "license": "Apache-2.0",
+  "workspaces": [
+    "apps/web",
+    "services/core-api",
+    "packages/domain"
+  ],
+  "engines": {
+    "node": ">=22.13.0"
+  },
+  "scripts": {
+    "dev": "concurrently -n web,api -c cyan,green \"npm run dev -w apps/web\" \"npm run dev -w services/core-api\"",
+    "build": "npm run build -w packages/domain && npm run build -w services/core-api && npm run build -w apps/web",
+    "lint": "npm run lint -w apps/web",
+    "pretypecheck": "npm run build -w packages/domain",
+    "typecheck": "npm run typecheck -w packages/domain && npm run typecheck -w services/core-api && npm run typecheck -w apps/web",
+    "pretest": "npm run build -w packages/domain",
+    "test": "npm run test -w packages/domain && npm run test -w services/core-api",
+    "test:python": "uv run --project services/ai-copilot --extra dev pytest -q",
+    "eval": "uv run --project services/ai-copilot --extra dev python services/ai-copilot/evaluate.py",
+    "docs:check": "node scripts/verify-docs.mjs",
+    "api:lint": "redocly lint --config .redocly.yaml docs/api/openapi.yaml",
+    "check": "npm run lint && npm run typecheck && npm run test && npm run test:python && npm run eval && npm run docs:check && npm run api:lint && npm run build"
+  },
+  "devDependencies": {
+    "@redocly/cli": "^2.48.0",
+    "concurrently": "^9.2.1",
+    "eslint": "^9.39.5"
+  }
+}
