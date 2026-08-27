@@ -2,7 +2,7 @@ import { expect, test } from "@playwright/test";
 
 test.beforeEach(async ({ page }) => {
   await page.addInitScript(() => window.localStorage.clear());
-  await page.goto("/");
+  await page.goto("/console/");
   await expect(page.getByTestId("operations-lab")).toHaveAttribute("data-hydrated", "true");
 });
 
@@ -47,4 +47,22 @@ test("supports English and a mobile transaction workflow", async ({ page }) => {
   await page.getByRole("button", { name: "Normal" }).click();
   await page.getByRole("button", { name: "Submit withdrawal" }).click();
   await expect(page.getByTestId("selected-status")).toHaveText("APPROVED");
+});
+
+test("exposes dedicated landing, architecture, runbook, and control-plane routes", async ({ page }) => {
+  await page.getByRole("link", { name: "首页", exact: true }).click();
+  await expect(page).toHaveURL(/\/$/);
+  await expect(page.getByTestId("landing-page")).toBeVisible();
+
+  await page.getByRole("link", { name: "解决方案架构", exact: true }).click();
+  await expect(page).toHaveURL(/\/architecture\/$/);
+  await expect(page.getByTestId("architecture-page")).toBeVisible();
+
+  await page.getByRole("link", { name: "运行手册", exact: true }).click();
+  await expect(page).toHaveURL(/\/runbooks\/$/);
+  await expect(page.getByTestId("runbooks-page")).toBeVisible();
+
+  await page.getByRole("link", { name: "控制平台", exact: true }).click();
+  await expect(page).toHaveURL(/\/console\/$/);
+  await expect(page.getByTestId("control-plane-page")).toBeVisible();
 });

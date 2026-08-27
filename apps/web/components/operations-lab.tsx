@@ -33,6 +33,7 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import { FormEvent, useEffect, useMemo, useState } from "react";
+import type { Locale } from "./locale-provider";
 import {
   approveContainment,
   approveTransaction,
@@ -50,8 +51,6 @@ import {
   type LabState,
   type SettlementFault,
 } from "../lib/lab-engine";
-
-type Locale = "en" | "zh-CN";
 
 interface TransactionFormState {
   idempotencyKey: string;
@@ -281,7 +280,7 @@ function loadStoredState(): LabState | null {
   }
 }
 
-export function OperationsLab({ locale }: { locale: Locale }) {
+export function OperationsLab({ locale, standalone = false }: { locale: Locale; standalone?: boolean }) {
   const t = words[locale];
   const initial = useMemo(() => createSeededLabState(), []);
   const [lab, setLab] = useState<LabState>(initial);
@@ -423,7 +422,7 @@ export function OperationsLab({ locale }: { locale: Locale }) {
   };
 
   return (
-    <section className="section operations-section" id="scenario" data-testid="operations-lab" data-hydrated={hydrated}>
+    <section className={`section operations-section${standalone ? " standalone" : ""}`} id="scenario" data-testid="operations-lab" data-hydrated={hydrated}>
       <div className="section-heading operations-heading">
         <div>
           <span className="section-index">{t.index}</span>

@@ -24,6 +24,15 @@ FinCloud Sentinel 是面向金融科技解决方案架构师 / FDE 的可运行�
 > **Scope:** synthetic transactions only. This repository is not a custody, exchange, payment,
 > AML, or investment product, and it must not process real funds or personal data.
 
+## Web surfaces
+
+| Surface | Purpose | Live route |
+|---|---|---|
+| Product home | Scope, proof, and entry points | [Home](https://thunderxu7-sketch.github.io/fincloud-sentinel/) |
+| Control plane | Transaction, risk, settlement, reconciliation, and containment | [Console](https://thunderxu7-sketch.github.io/fincloud-sentinel/console/) |
+| Architecture | Production topology, decisions, and deployment modes | [Architecture](https://thunderxu7-sketch.github.io/fincloud-sentinel/architecture/) |
+| Runbooks | Incident procedures and signal-to-control matrix | [Runbooks](https://thunderxu7-sketch.github.io/fincloud-sentinel/runbooks/) |
+
 ## What is demonstrable
 
 | Concern | Executable evidence | Production mapping |
@@ -39,7 +48,8 @@ FinCloud Sentinel 是面向金融科技解决方案架构师 / FDE 的可运行�
 
 ## Try the control loop in 90 seconds
 
-The GitHub Pages experience executes the same risk, state-machine, money, ledger, and
+The dedicated [control plane](https://thunderxu7-sketch.github.io/fincloud-sentinel/console/)
+executes the same risk, state-machine, money, ledger, and
 reconciliation modules covered by the test suite. It is not a prerecorded scenario:
 
 1. Open **交易实验台 / Operations lab** and load **人工审核 / Review**.
@@ -135,7 +145,7 @@ network, KMS, or disaster-recovery evidence. Never leave an interview environmen
 
 ```bash
 npm run check              # lint, API contract, TS checks, 20 tests, AI evals, docs, build
-npm run test:e2e           # 2 browser flows: full control loop + bilingual mobile workflow
+npm run test:e2e           # 3 flows: control loop + bilingual mobile + dedicated route navigation
 helm lint infra/helm/fincloud-sentinel
 helm template sentinel infra/helm/fincloud-sentinel >/tmp/fincloud.yaml
 ```
@@ -147,7 +157,7 @@ run without approval.
 ## Repository map
 
 ```text
-apps/web/                     bilingual Next.js transaction and fault-injection laboratory
+apps/web/                     bilingual Next.js home, control plane, architecture, and runbooks
 packages/domain/              money, state machine, risk, ledger, reconciliation
 services/core-api/            Fastify API and Prometheus metrics
 services/ai-copilot/          FastAPI RAG/guardrail reference and evaluation set
