@@ -27,7 +27,7 @@ jobs:
       - run: npm ci
       - run: npm run build -w packages/domain && npm run build -w apps/web
         env:
-          GITHUB_ACTIONS: "true"
+          GITHUB_PAGES: "true"
       - run: touch apps/web/out/.nojekyll
       - uses: actions/upload-pages-artifact@v5
         with:
