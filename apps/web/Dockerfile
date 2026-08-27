@@ -12,7 +12,7 @@ COPY packages/domain packages/domain
 COPY apps/web apps/web
 RUN npm run build -w packages/domain && npm run build -w apps/web
 
-FROM nginx:1.29-alpine AS runtime
+FROM nginx:1.31-alpine AS runtime
 COPY apps/web/nginx.conf /etc/nginx/conf.d/default.conf
 COPY --from=build /workspace/apps/web/out /usr/share/nginx/html
 EXPOSE 8080
