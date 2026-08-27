@@ -1,4 +1,4 @@
-FROM node:22.23-alpine AS build
+FROM node:26.7-alpine AS build
 WORKDIR /workspace
 COPY package.json package-lock.json ./
 COPY packages/domain/package.json packages/domain/package.json
@@ -13,7 +13,7 @@ COPY packages/domain packages/domain
 COPY services/core-api services/core-api
 RUN npm run build -w packages/domain && npm run build -w services/core-api
 
-FROM node:22.23-alpine AS runtime
+FROM node:26.7-alpine AS runtime
 ENV NODE_ENV=production HOST=0.0.0.0 PORT=4000
 RUN addgroup -S fincloud && adduser -S fincloud -G fincloud
 WORKDIR /app
