@@ -20,7 +20,8 @@
     "pretypecheck": "npm run build -w packages/domain",
     "typecheck": "npm run typecheck -w packages/domain && npm run typecheck -w services/core-api && npm run typecheck -w apps/web",
     "pretest": "npm run build -w packages/domain",
-    "test": "npm run test -w packages/domain && npm run test -w services/core-api",
+    "test": "npm run test -w packages/domain && npm run test -w services/core-api && npm run test -w apps/web",
+    "test:e2e": "playwright test",
     "test:python": "uv run --project services/ai-copilot --extra dev pytest -q",
     "eval": "uv run --project services/ai-copilot --extra dev python services/ai-copilot/evaluate.py",
     "docs:check": "node scripts/verify-docs.mjs",
@@ -28,6 +29,7 @@
     "check": "npm run lint && npm run typecheck && npm run test && npm run test:python && npm run eval && npm run docs:check && npm run api:lint && npm run build"
   },
   "devDependencies": {
+    "@playwright/test": "^1.62.1",
     "@redocly/cli": "^2.48.0",
     "concurrently": "^9.2.1",
     "eslint": "^9.39.5"

@@ -37,6 +37,25 @@ FinCloud Sentinel 是面向金融科技解决方案架构师 / FDE 的可运行�
 | Delivery | Docker Compose, hardened Helm chart, Alibaba Cloud Terraform reference | ACR + ACK + ALB/WAF/GA |
 | Presales | Discovery, NFRs, POC, TCO, RFP, competitive and executive materials | Reusable customer engagement assets |
 
+## Try the control loop in 90 seconds
+
+The GitHub Pages experience executes the same risk, state-machine, money, ledger, and
+reconciliation modules covered by the test suite. It is not a prerecorded scenario:
+
+1. Open **交易实验台 / Operations lab** and load **人工审核 / Review**.
+2. Submit the withdrawal and inspect the calculated score, policy reasons, state, and event stream.
+3. Explicitly approve the risk review, then broadcast and settle the transaction.
+4. Replay the same idempotency key and verify that the attempt count increases without another
+   transaction or ledger posting.
+5. Inject an external amount mismatch and run reconciliation. The report is calculated from the
+   selected transaction, double-entry ledger, and synthetic settlement evidence.
+6. Run the governed investigator, follow its citations, approve containment, and export the full
+   evidence bundle as JSON.
+
+Session data is synthetic and persisted only in the current browser. The Pages build uses an
+offline domain-engine mode so it needs no cloud bill or secrets; Docker Compose exposes the same
+capabilities as Fastify/FastAPI services for API and observability demonstrations.
+
 ## Architecture
 
 ```mermaid
@@ -115,7 +134,8 @@ network, KMS, or disaster-recovery evidence. Never leave an interview environmen
 ## Quality gates
 
 ```bash
-npm run check              # lint, API contract, TS checks, 16 tests, AI evals, docs, build
+npm run check              # lint, API contract, TS checks, 20 tests, AI evals, docs, build
+npm run test:e2e           # 2 browser flows: full control loop + bilingual mobile workflow
 helm lint infra/helm/fincloud-sentinel
 helm template sentinel infra/helm/fincloud-sentinel >/tmp/fincloud.yaml
 ```
@@ -127,7 +147,7 @@ run without approval.
 ## Repository map
 
 ```text
-apps/web/                     bilingual Next.js static demo
+apps/web/                     bilingual Next.js transaction and fault-injection laboratory
 packages/domain/              money, state machine, risk, ledger, reconciliation
 services/core-api/            Fastify API and Prometheus metrics
 services/ai-copilot/          FastAPI RAG/guardrail reference and evaluation set

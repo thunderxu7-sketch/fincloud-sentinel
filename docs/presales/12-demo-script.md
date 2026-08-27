@@ -16,29 +16,36 @@ Ask the sponsor to confirm the target problem and success metric. If different, 
 
 ## 2:00–5:00 — explain the invariant
 
-Show the architecture and transaction state machine. Point to integer money, idempotency, balanced
-posting, outbox/inbox and reconciliation. Explain that at-least-once delivery is made safe rather
-than marketed as exactly-once transport.
+Open **Operations lab / 交易实验台**. Explain that the browser calls the shared domain modules used
+by the API and tests; it is not a timeline animation. Point to integer money, idempotency, explicit
+state transitions, balanced posting and reconciliation. Explain that at-least-once delivery is made
+safe rather than marketed as exactly-once transport.
 
 ## 5:00–8:00 — healthy and retry path
 
-1. Run **Healthy withdrawal**.
-2. Show completed state, 12 synthetic confirmations and debit=credit evidence.
-3. POST one transaction twice with the same key; show `201`, then `200 replayed=true` and one ID.
-4. Explain durable DB uniqueness remains authoritative even if cache is lost.
+1. Load **Normal / 正常交易**, submit the withdrawal, and show the calculated low-risk decision.
+2. Select **Broadcast & settle / 广播并结算**. Follow the state/event trace through completion.
+3. Show the generated debit and credit entries plus 12 synthetic confirmations.
+4. Select **Replay same request / 使用相同幂等键重放**. Show one more attempt and replay event but
+   no additional transaction or ledger posting.
+5. Explain durable DB uniqueness remains authoritative in production even if cache is lost.
 
 ## 8:00–12:00 — funds-safety incident
 
-1. Run **Ledger mismatch**.
-2. Show independent reconciliation, SEV-1, affected route paused and evidence retained.
-3. Emphasize: AI proposes containment but cannot execute it; two-person approval is outside model.
-4. Open `ledger-reconciliation.md` and show citation/immutable transaction ID.
+1. Select the completed transaction and inject **Amount mismatch / 结算金额不一致**.
+2. The UI executes reconciliation immediately; show the run ID, expected/received atomic amounts,
+   balanced internal ledger, and critical external mismatch.
+3. Run the governed investigator and follow the reconciliation, event and Runbook citations.
+4. Emphasize that the investigator only proposes containment. Click **Approve containment** to add
+   an explicit operator-approved route-pause event, then export the evidence JSON.
 
 ## 12:00–15:00 — model degradation and AI governance
 
-1. Run **Risk model timeout**; show circuit breaker and deterministic fail-closed fallback.
-2. Show injection/redaction test and AI evaluation result.
-3. Explain model/version, feature time, canary, fallback and zero unsafe auto-action metric.
+1. Load **Review / 人工审核** and submit it. Show the policy reasons and absence of ledger entries.
+2. Explicitly approve the review, then settle. Explain that uncertain requests never fail open.
+3. Show the FastAPI injection/redaction tests and 4/4 offline AI evaluation from CI or local output.
+4. Explain model/version, feature time, canary, fallback and why the Pages investigator is labeled
+   deterministic offline mode rather than presented as a live LLM.
 
 ## 15:00–17:00 — cloud and operations
 

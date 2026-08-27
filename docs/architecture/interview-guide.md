@@ -8,6 +8,14 @@ idempotency, double-entry posting, outbox/inbox delivery, and independent reconc
 into one funds-safety invariant. Alibaba Cloud services map to operational responsibilities, and
 the AI copilot can investigate evidence but cannot move funds without human approval.
 
+## Prove it before drawing it
+
+Start in the operations lab, not on the architecture diagram. Create a request, show its calculated
+risk decision, approve/settle it, replay the idempotency key, inject a settlement mismatch, run
+reconciliation, follow cited evidence, and explicitly approve containment. Then draw the production
+mapping. This distinguishes executable reference behavior from a dashboard shell while keeping the
+boundary honest: browser data is synthetic; durable services and observability run through Docker.
+
 ## Likely second questions
 
 - **Why not exactly-once messages?** Transport retries are normal. Durable unique keys and idempotent

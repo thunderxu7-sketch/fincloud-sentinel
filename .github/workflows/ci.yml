@@ -17,7 +17,7 @@ jobs:
   quality:
     name: Code, tests, evals, and static export
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-node@v7
@@ -30,11 +30,21 @@ jobs:
       - run: npm ci
       - run: uv sync --project services/ai-copilot --extra dev --locked
       - run: npm run check
+      - run: npx playwright install --with-deps chromium
+      - run: npm run test:e2e
+        env:
+          PLAYWRIGHT_USE_EXISTING_BUILD: "1"
       - uses: actions/upload-artifact@v7
         with:
           name: static-site
           path: apps/web/out
           if-no-files-found: error
+      - uses: actions/upload-artifact@v7
+        if: failure()
+        with:
+          name: playwright-report
+          path: playwright-report
+          if-no-files-found: ignore
 
   platform:
     name: Helm, Terraform, and Compose validation
