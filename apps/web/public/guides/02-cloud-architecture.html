@@ -1,0 +1,159 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="用通俗语言理解容器化、Kubernetes、Helm、Terraform、监控与灾备。" />
+  <title>云架构 · FinCloud Sentinel 面试讲解</title>
+  <link rel="stylesheet" href="./guide.css" />
+  <script defer src="./guide.js"></script>
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="./index.html"><span class="brand-mark">F</span><span>FinCloud <strong>讲解手册</strong></span></a>
+    <nav aria-label="五个讲解主题">
+      <a data-guide-link href="./01-financial-transaction.html">01 金融交易</a>
+      <a data-guide-link href="./02-cloud-architecture.html">02 云架构</a>
+      <a data-guide-link href="./03-ai-delivery.html">03 AI落地</a>
+      <a data-guide-link href="./04-presales-delivery.html">04 售前能力</a>
+      <a data-guide-link href="./05-engineering-evidence.html">05 工程能力</a>
+    </nav>
+    <a class="home-link" href="../">返回项目首页</a>
+  </header>
+
+  <main class="page-shell">
+    <section class="hero">
+      <div class="hero-copy">
+        <span class="kicker">02 / CLOUD-NATIVE ARCHITECTURE</span>
+        <h1>云架构不是“把服务放进 Kubernetes”。</h1>
+        <p>专业云架构要回答六件事：程序如何一致运行、如何调度扩缩、如何版本化发布、基础设施如何复制、故障如何被看见，以及区域失效时如何恢复。</p>
+        <div class="hero-meta"><span>建议阅读 12 分钟</span><span>面试讲解 90 秒</span><span>本地 / POC / 生产三层边界</span></div>
+      </div>
+      <div class="hero-visual" aria-label="云原生交付链路">
+        <div class="visual-title"><strong>从代码到可恢复服务</strong><span>DELIVERY CHAIN</span></div>
+        <div class="visual-flow">
+          <div class="visual-node"><b>01</b><div><strong>Container</strong><small>一致的运行包</small></div><em>封装</em></div>
+          <div class="visual-node"><b>02</b><div><strong>Kubernetes</strong><small>调度与自愈</small></div><em>运行</em></div>
+          <div class="visual-node"><b>03</b><div><strong>Helm</strong><small>版本化应用配置</small></div><em>发布</em></div>
+          <div class="visual-node"><b>04</b><div><strong>Terraform</strong><small>声明式云资源</small></div><em>建环境</em></div>
+          <div class="visual-node"><b>05</b><div><strong>Observe & Recover</strong><small>SLO · Alert · DR</small></div><em>守护</em></div>
+        </div>
+      </div>
+    </section>
+
+    <aside class="quick-answer"><span>一句话先懂</span><strong>容器解决“带什么运行”，Kubernetes 解决“在哪里、跑几个、坏了怎么办”，Helm 管应用版本，Terraform 建云环境，监控与灾备保证问题可见且能够恢复。</strong></aside>
+
+    <section class="section reveal">
+      <div class="section-head"><span class="section-index">01 / 先用生活例子理解</span><h2>把一个小餐馆扩成全国连锁。</h2><p>配方一致只是第一步，还要决定门店选址、开多少灶台、如何升级菜单、如何统一建设门店，以及停电或城市封控时怎么继续营业。</p></div>
+      <div class="analogy">
+        <div class="analogy-story"><small>生活类比</small><h3>标准餐盒 + 连锁运营系统</h3><p>Docker 像把配方和厨具装进标准餐盒；Kubernetes 像区域运营中心；Helm 是门店开业手册的版本；Terraform 是门店、水电和仓库的施工图；监控是经营看板；灾备是备用中央厨房。</p></div>
+        <div class="analogy-map">
+          <div class="map-row"><span>标准餐盒</span><b>→</b><p>容器镜像把程序、依赖与启动方式封装为一致制品。</p></div>
+          <div class="map-row"><span>区域运营中心</span><b>→</b><p>Kubernetes 根据期望状态调度副本、重启故障实例并滚动发布。</p></div>
+          <div class="map-row"><span>开店版本手册</span><b>→</b><p>Helm 把 Deployment、Service、配置和安全策略打包并参数化。</p></div>
+          <div class="map-row"><span>施工图纸</span><b>→</b><p>Terraform 声明网络、集群、数据库等资源，让环境可审查、可重复。</p></div>
+          <div class="map-row"><span>备用中央厨房</span><b>→</b><p>灾备用明确的 RPO/RTO、切换门禁和演练证明恢复能力。</p></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section reveal">
+      <div class="section-head"><span class="section-index">02 / 六个核心能力</span><h2>每个工具只解决一类问题。</h2><p>面试时先说职责边界，再说产品；否则很容易变成没有设计依据的“技术全家桶”。</p></div>
+      <div class="concept-grid">
+        <article class="concept-card"><span>01</span><h3>容器化 Containerization</h3><p>镜像是不可变交付物，开发、测试、生产运行同一个 SHA。多阶段构建、非 root 用户和最小基础镜像降低体积与攻击面。</p><code>source → image digest<br />same artifact across environments</code></article>
+        <article class="concept-card"><span>02</span><h3>Kubernetes</h3><p>用 Deployment 描述副本和升级策略，用 Service 暴露网络，用探针判断健康，用资源限制避免单服务拖垮节点。</p><code>desired state → scheduler → pods<br />readiness ≠ liveness</code></article>
+        <article class="concept-card"><span>03</span><h3>Helm</h3><p>把一组 Kubernetes 清单做成版本化 Chart。不同环境只替换 values，而不是复制三套容易漂移的 YAML。</p><code>chart + values-prod.yaml<br />→ repeatable release</code></article>
+        <article class="concept-card"><span>04</span><h3>Terraform</h3><p>把 VPC、子网、ACK、负载均衡和托管服务写成声明式代码，通过 plan 先看差异，再经过审批 apply。</p><code>code → plan → review → apply<br />state must be protected</code></article>
+        <article class="concept-card"><span>05</span><h3>监控与可观测性</h3><p>指标告诉你“是否坏了”，日志解释“发生了什么”，链路说明“坏在哪里”。最终用 SLO 和错误预算决定告警与发布节奏。</p><code>metrics + logs + traces<br />→ SLO → alert → runbook</code></article>
+        <article class="concept-card"><span>06</span><h3>灾备 DR</h3><p>RPO 是最多能丢多少数据，RTO 是多久恢复。真正的灾备包含数据复制、写入隔离、切换步骤、对账门禁和定期演练。</p><code>fence old writer → promote<br />→ reconcile → reopen traffic</code></article>
+      </div>
+    </section>
+
+    <section class="section reveal">
+      <div class="section-head"><span class="section-index">03 / 一次生产发布如何完成</span><h2>基础设施和应用分开变更，但共享验收门禁。</h2></div>
+      <div class="flow">
+        <article class="flow-step"><span>STEP 01</span><h3>构建不可变镜像</h3><p>测试通过后生成带提交 SHA 的镜像，扫描依赖和镜像漏洞，不在服务器现场编译。</p></article>
+        <article class="flow-step"><span>STEP 02</span><h3>规划云资源差异</h3><p>Terraform plan 展示将新增、修改、销毁的资源，高风险差异需要人工审批。</p></article>
+        <article class="flow-step"><span>STEP 03</span><h3>Helm 渐进发布</h3><p>使用同一 Chart 和环境 values，配置探针、资源限制、PodDisruptionBudget 与滚动策略。</p></article>
+        <article class="flow-step"><span>STEP 04</span><h3>SLO 守门</h3><p>观察错误率、P95/P99 时延、饱和度和业务完整性指标，超过预算就自动停止或回滚。</p></article>
+        <article class="flow-step"><span>STEP 05</span><h3>恢复能力验证</h3><p>故障注入或演练验证副本自愈、服务降级、数据恢复和对账完成后再宣布成功。</p></article>
+      </div>
+    </section>
+
+    <section class="section reveal">
+      <div class="section-head"><span class="section-index">04 / 工具职责边界</span><h2>知道“它不负责什么”，比会写命令更重要。</h2></div>
+      <div class="compare-wrap"><table class="compare">
+        <thead><tr><th>能力</th><th>主要负责</th><th>不直接负责</th><th>验收证据</th></tr></thead>
+        <tbody>
+          <tr><td>Docker</td><td>可重复的程序运行包</td><td>跨节点调度、灾备与业务一致性</td><td>镜像摘要、SBOM、扫描结果</td></tr>
+          <tr><td>Kubernetes</td><td>调度、自愈、服务发现、滚动升级</td><td>自动保证数据库和资金正确</td><td>探针、资源策略、发布状态</td></tr>
+          <tr><td>Helm</td><td>应用清单模板化与版本管理</td><td>创建 VPC、ACK、数据库实例</td><td>lint、template、release version</td></tr>
+          <tr><td>Terraform</td><td>云资源生命周期与变更计划</td><td>应用内部业务流程</td><td>fmt、validate、plan、审批记录</td></tr>
+          <tr><td>Prometheus / ARMS</td><td>指标、告警、SLO与趋势</td><td>替代日志、链路和事故流程</td><td>规则、dashboard、runbook 链接</td></tr>
+          <tr><td>多可用区 / DR</td><td>降低单点故障并恢复业务</td><td>自动证明切换后账务一致</td><td>RPO/RTO、演练时间线、对账报告</td></tr>
+        </tbody>
+      </table></div>
+    </section>
+
+    <section class="project-proof reveal">
+      <span class="section-index">05 / FINCLOUD SENTINEL 中如何落地</span>
+      <h2>同一领域模型，三个逐步逼近生产的环境。</h2>
+      <p>项目刻意把公开沙箱、Docker 参考栈和阿里云生产映射分开，避免把架构图写成虚假的运行事实。</p>
+      <div class="proof-grid">
+        <article class="proof-item"><span>PUBLIC</span><h3>GitHub Pages 沙箱</h3><p>静态导出 + 浏览器领域引擎，零密钥、零云账单，用于快速面试演示。</p></article>
+        <article class="proof-item"><span>LOCAL</span><h3>Docker Compose</h3><p>Next.js、Fastify、FastAPI、Prometheus 与 Grafana 可一键启动并烟雾测试。</p></article>
+        <article class="proof-item"><span>K8S</span><h3>加固 Helm Chart</h3><p>包含探针、资源限制、安全上下文、PDB 和可审查模板输出。</p></article>
+        <article class="proof-item"><span>IAC</span><h3>Terraform 参考环境</h3><p>默认不创建付费 ACK，通过 fmt、init 与 validate 验证结构和变量边界。</p></article>
+        <article class="proof-item"><span>OBSERVE</span><h3>Prometheus + Grafana</h3><p>API 与 Copilot 暴露指标，仓库存放 SLO 告警规则和运行看板。</p></article>
+        <article class="proof-item"><span>RECOVER</span><h3>回滚与灾备手册</h3><p>发布回滚、灾难恢复、混沌演练均有版本化步骤与验收门禁。</p></article>
+      </div>
+      <div class="proof-boundary"><strong>生产映射</strong><span>目标架构可映射到 GA/WAF/ALB、ACK/ACR、OceanBase/Tair/RocketMQ、ARMS/SLS/KMS 等阿里云能力；当前公开演示并未声称实际运行这些托管产品。</span></div>
+    </section>
+
+    <section class="section reveal">
+      <div class="section-head"><span class="section-index">06 / 面试可以直接这样讲</span><h2>90 秒口述版本。</h2></div>
+      <div class="script-box">
+        <blockquote id="interview-script">“我不会把云架构简单理解为上 Kubernetes，而是分六层。<strong>容器</strong>保证制品一致；<strong>Kubernetes</strong>负责调度、自愈和渐进发布；<strong>Helm</strong>管理应用清单版本；<strong>Terraform</strong>让网络、集群和托管服务可重复创建；<strong>可观测性</strong>用指标、日志、链路和 SLO 发现问题；<strong>灾备</strong>用明确 RPO/RTO、写入隔离、切换和对账证明恢复。我的项目提供 Pages、Docker 和阿里云生产映射三层环境，能展示镜像构建、Helm/Terraform 验证、Prometheus/Grafana 以及回滚和灾备 Runbook。”</blockquote>
+        <aside class="script-side"><span>表达结构</span><p>先讲每层解决的问题，再说部署层次和证据。不要说“用了 Kubernetes 所以高可用”。</p><button class="copy-button" data-copy="#interview-script">复制口述稿</button></aside>
+      </div>
+    </section>
+
+    <section class="section reveal">
+      <div class="section-head"><span class="section-index">07 / 面试官继续追问</span><h2>四个高频问题。</h2></div>
+      <div class="question-grid">
+        <details><summary>Docker Compose 和 Kubernetes 的分界在哪里？</summary><p>Compose 适合本地集成和单机演示；Kubernetes 适合多节点调度、自愈、渐进发布、隔离和平台治理。是否上 K8s 取决于团队规模、可用性、发布频率和运维能力，不是项目越大越必须。</p></details>
+        <details><summary>Helm 和 Terraform 为什么不能只选一个？</summary><p>Terraform 更适合管理云资源及其生命周期；Helm 更适合管理 Kubernetes 内的应用发布。可以由 Terraform 安装 Helm release，但仍应保持基础设施与应用版本的责任边界。</p></details>
+        <details><summary>多可用区就等于灾备吗？</summary><p>不是。多可用区主要处理区域内故障；灾备还需要跨故障域的数据策略、RPO/RTO、写入隔离、流量切换、依赖验证和业务对账，并通过演练证明。</p></details>
+        <details><summary>监控很多指标为什么还是会漏告警？</summary><p>因为指标数量不等于可运营性。应从用户结果定义 SLI/SLO，使用多窗口燃烧率告警减少噪声，并为每条告警指定 owner、dashboard 和 runbook。</p></details>
+      </div>
+    </section>
+
+    <section class="section reveal">
+      <div class="section-head"><span class="section-index">08 / 不要这样说</span><h2>四个常见架构误区。</h2></div>
+      <div class="pitfall-list">
+        <article class="pitfall"><span>!</span><div><h3>“上云以后天然高可用”</h3><p>云只提供能力，副本、故障域、数据策略和恢复流程仍需设计验证。</p></div></article>
+        <article class="pitfall"><span>!</span><div><h3>“Pod 重启就是自愈”</h3><p>实例恢复不代表业务恢复；还要检查依赖、积压、账务和客户影响。</p></div></article>
+        <article class="pitfall"><span>!</span><div><h3>“Terraform 可以随时重建生产”</h3><p>状态、数据、密钥和外部依赖不能只靠 IaC 重建，必须有备份与恢复设计。</p></div></article>
+        <article class="pitfall"><span>!</span><div><h3>“有 Grafana 就算可观测”</h3><p>真正的可观测性还包括高质量遥测、SLO、告警路由和可执行手册。</p></div></article>
+      </div>
+    </section>
+
+    <section class="section reveal">
+      <div class="practice" data-practice>
+        <div class="practice-copy"><h3>学完后的自检</h3><p>不背产品清单，先证明自己能解释职责边界和故障恢复。</p><div class="progress"><div class="progress-label"><span>掌握进度</span><span data-progress-text>0/4</span></div><div class="progress-track"><i data-progress></i></div></div></div>
+        <div class="checklist">
+          <label><input type="checkbox" /><b>✓</b><span>能分别用一句话解释 Docker、Kubernetes、Helm 和 Terraform。</span></label>
+          <label><input type="checkbox" /><b>✓</b><span>能说清指标、日志、链路与 SLO 的关系。</span></label>
+          <label><input type="checkbox" /><b>✓</b><span>能解释 RPO、RTO、写入隔离和恢复后对账。</span></label>
+          <label><input type="checkbox" /><b>✓</b><span>能明确区分项目已经运行的能力与阿里云生产映射。</span></label>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="page-footer">
+    <div class="pager"><a href="./01-financial-transaction.html"><span>← 上一篇</span><strong>金融交易保障</strong></a><a href="./03-ai-delivery.html"><span>下一篇 →</span><strong>AI 落地与治理</strong></a></div>
+    <div class="footer-note"><span>FinCloud Sentinel · 面试讲解材料</span><span>生产能力以需求、边界和验证证据为准</span></div>
+  </footer>
+</body>
+</html>

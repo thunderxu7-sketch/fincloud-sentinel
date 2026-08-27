@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="用通俗语言理解需求调研、方案选型、POC、RFP、TCO/ROI 与交付规划。" />
+  <title>售前与方案交付 · FinCloud Sentinel 面试讲解</title>
+  <link rel="stylesheet" href="./guide.css" />
+  <script defer src="./guide.js"></script>
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="./index.html"><span class="brand-mark">F</span><span>FinCloud <strong>讲解手册</strong></span></a>
+    <nav aria-label="五个讲解主题">
+      <a data-guide-link href="./01-financial-transaction.html">01 金融交易</a>
+      <a data-guide-link href="./02-cloud-architecture.html">02 云架构</a>
+      <a data-guide-link href="./03-ai-delivery.html">03 AI落地</a>
+      <a data-guide-link href="./04-presales-delivery.html">04 售前能力</a>
+      <a data-guide-link href="./05-engineering-evidence.html">05 工程能力</a>
+    </nav>
+    <a class="home-link" href="../">返回项目首页</a>
+  </header>
+
+  <main class="page-shell">
+    <section class="hero">
+      <div class="hero-copy">
+        <span class="kicker">04 / PRESALES & SOLUTION DELIVERY</span>
+        <h1>售前不是讲产品，而是降低客户做决定的风险。</h1>
+        <p>从需求调研开始，把业务目标翻译成可量化指标，再通过方案选型、POC、RFP、TCO/ROI 和交付计划，让客户知道为什么选、如何验证、花多少钱、怎么安全上线。</p>
+        <div class="hero-meta"><span>建议阅读 12 分钟</span><span>面试讲解 90 秒</span><span>从发现到交付闭环</span></div>
+      </div>
+      <div class="hero-visual" aria-label="售前决策链路">
+        <div class="visual-title"><strong>从模糊需求到生产决策</strong><span>DECISION JOURNEY</span></div>
+        <div class="visual-flow">
+          <div class="visual-node"><b>01</b><div><strong>Discover</strong><small>业务目标与约束</small></div><em>问对问题</em></div>
+          <div class="visual-node"><b>02</b><div><strong>Design</strong><small>需求映射与方案取舍</small></div><em>选对能力</em></div>
+          <div class="visual-node"><b>03</b><div><strong>Prove</strong><small>POC 与验收证据</small></div><em>证明结果</em></div>
+          <div class="visual-node"><b>04</b><div><strong>Decide</strong><small>RFP · TCO · ROI</small></div><em>量化选择</em></div>
+          <div class="visual-node"><b>05</b><div><strong>Deliver</strong><small>路线图、风险和交接</small></div><em>安全落地</em></div>
+        </div>
+      </div>
+    </section>
+
+    <aside class="quick-answer"><span>一句话先懂</span><strong>专业售前就是把“我觉得这个方案不错”变成“目标明确、约束已知、方案有取舍、效果可验收、成本可计算、交付可执行”。</strong></aside>
+
+    <section class="section reveal">
+      <div class="section-head"><span class="section-index">01 / 先用生活例子理解</span><h2>把售前想成请建筑师设计一座医院。</h2><p>客户说“我要一栋先进的大楼”不是完整需求。建筑师必须先问服务多少人、哪些科室、停电能撑多久、预算和工期，再比较方案、做样板间、算总成本并制定施工计划。</p></div>
+      <div class="analogy">
+        <div class="analogy-story"><small>生活类比</small><h3>不是卖最贵的材料，而是证明这栋楼能用</h3><p>如果不知道病床数和应急等级，就无法判断电梯、供电和消防怎么选。方案的价值不是产品列表多，而是每个选择都能回到业务目标、约束与可验证结果。</p></div>
+        <div class="analogy-map">
+          <div class="map-row"><span>问科室和人流</span><b>→</b><p>需求调研：业务目标、用户旅程、现状痛点和利益相关者。</p></div>
+          <div class="map-row"><span>确定结构与材料</span><b>→</b><p>方案选型：按容量、安全、合规、运维和成本比较候选能力。</p></div>
+          <div class="map-row"><span>先做样板间</span><b>→</b><p>POC：用最小范围验证最大不确定性，不是做一个缩小版生产。</p></div>
+          <div class="map-row"><span>正式招标答疑</span><b>→</b><p>RFP：逐条回应要求，标明满足、偏差、假设和证据。</p></div>
+          <div class="map-row"><span>预算和施工计划</span><b>→</b><p>TCO/ROI 与交付：算全生命周期成本并明确阶段、责任和退出条件。</p></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section reveal">
+      <div class="section-head"><span class="section-index">02 / 六个核心能力</span><h2>把技术讨论变成客户可以批准的决策。</h2></div>
+      <div class="concept-grid">
+        <article class="concept-card"><span>01</span><h3>需求调研 Discovery</h3><p>不仅问“想用什么产品”，还要问业务结果、现状基线、交易量、峰值、数据分类、合规、恢复目标、团队能力和决策流程。</p><code>outcome + baseline + constraint<br />+ stakeholder + decision date</code></article>
+        <article class="concept-card"><span>02</span><h3>方案选型 Selection</h3><p>建立需求到能力的追踪矩阵，比较性能、安全、可用性、生态、锁定风险、运维复杂度与成本，并记录为什么不选其他方案。</p><code>requirement → capability<br />→ option → trade-off → decision</code></article>
+        <article class="concept-card"><span>03</span><h3>POC 验证</h3><p>围绕最关键风险设计可复现测试，提前约定数据集、负载、成功阈值、证据格式、负责人和失败后的决策。</p><code>hypothesis + metric + threshold<br />+ owner + evidence + exit</code></article>
+        <article class="concept-card"><span>04</span><h3>RFP 应答</h3><p>逐项说明 Fully / Partially / Not supported，附架构、控制、限制和证明材料。对未知项写假设，不用模糊措辞掩盖缺口。</p><code>requirement ID → response<br />→ evidence → deviation → owner</code></article>
+        <article class="concept-card"><span>05</span><h3>TCO / ROI</h3><p>TCO 计算云资源、软件、网络、迁移、人力、支持和风险成本；ROI 用节省成本、减少损失、提升收入或缩短上市时间衡量收益。</p><code>ROI = (benefit - total cost) / total cost<br />show assumptions and sensitivity</code></article>
+        <article class="concept-card"><span>06</span><h3>交付规划</h3><p>把方案拆成发现、基础环境、迁移、验证、灰度和运营阶段，明确 RACI、依赖、风险、回滚、培训、验收与交接。</p><code>phase → deliverable → gate<br />→ owner → risk → rollback</code></article>
+      </div>
+    </section>
+
+    <section class="section reveal">
+      <div class="section-head"><span class="section-index">03 / 一次售前项目如何推进</span><h2>每一阶段都要产生决策，而不只是文档。</h2></div>
+      <div class="flow">
+        <article class="flow-step"><span>STEP 01</span><h3>发现与资格判断</h3><p>确认业务痛点、预算、决策人、时间窗口和是否值得双方继续投入。</p></article>
+        <article class="flow-step"><span>STEP 02</span><h3>基线与需求矩阵</h3><p>量化容量、SLO、RPO/RTO、安全、数据驻留和现有成本，排出优先级。</p></article>
+        <article class="flow-step"><span>STEP 03</span><h3>方案与取舍</h3><p>给出高阶架构、产品映射、备选方案、风险和责任边界，并获得客户确认。</p></article>
+        <article class="flow-step"><span>STEP 04</span><h3>POC 与商业论证</h3><p>按计分卡收集证据，同时建立 TCO/ROI 和实施估算，形成 go / no-go 建议。</p></article>
+        <article class="flow-step"><span>STEP 05</span><h3>路线图与交接</h3><p>把承诺转成里程碑、RACI、验收门禁、运营模型和风险清单，避免售前结束后信息丢失。</p></article>
+      </div>
+    </section>
+
+    <section class="section reveal">
+      <div class="section-head"><span class="section-index">04 / 每份材料回答什么问题</span><h2>文档不是产出目的，决策才是。</h2></div>
+      <div class="compare-wrap"><table class="compare">
+        <thead><tr><th>材料</th><th>回答的问题</th><th>必须包含</th><th>完成标准</th></tr></thead>
+        <tbody>
+          <tr><td>Discovery 记录</td><td>客户为什么现在要做？</td><td>目标、基线、约束、决策人、时间</td><td>关键假设已被客户确认</td></tr>
+          <tr><td>需求与 NFR</td><td>什么叫“满足要求”？</td><td>容量、SLO、安全、合规、RPO/RTO</td><td>每项有优先级和验收方式</td></tr>
+          <tr><td>高阶方案</td><td>为什么这样选？</td><td>架构、产品映射、数据流、取舍、边界</td><td>需求可追踪到架构控制</td></tr>
+          <tr><td>POC 计分卡</td><td>最大风险被证明了吗？</td><td>用例、数据、阈值、证据、owner、退出条件</td><td>双方签署结果与下一步</td></tr>
+          <tr><td>RFP 应答</td><td>供应商是否满足正式要求？</td><td>逐条状态、证据、偏差、假设</td><td>不存在无 owner 的缺口</td></tr>
+          <tr><td>TCO / ROI</td><td>这个决定经济上合理吗？</td><td>成本口径、收益假设、敏感性和时间范围</td><td>财务与业务共同认可口径</td></tr>
+          <tr><td>交付计划</td><td>谁在什么时候怎么上线？</td><td>阶段、RACI、风险、回滚、培训、验收</td><td>售前承诺已进入交付基线</td></tr>
+        </tbody>
+      </table></div>
+    </section>
+
+    <section class="project-proof reveal">
+      <span class="section-index">05 / FINCLOUD SENTINEL 中如何落地</span>
+      <h2>仓库同时保存代码、方案与客户决策材料。</h2>
+      <p>项目不是只做一个演示页面，而是模拟完整解决方案生命周期：从第一次访谈到 POC 计分、成本分析、RFP 应答和部署交接。</p>
+      <div class="proof-grid">
+        <article class="proof-item"><span>DISCOVERY</span><h3>客户访谈问卷</h3><p>覆盖业务结果、当前架构、交易规模、安全、合规、运营和决策流程。</p></article>
+        <article class="proof-item"><span>REQUIREMENTS</span><h3>业务需求与 NFR</h3><p>把可用性、时延、完整性、RPO/RTO、数据驻留转为可验收条目。</p></article>
+        <article class="proof-item"><span>POC</span><h3>计划与计分卡</h3><p>定义场景、指标、权重、证据位置、成功阈值和决策出口。</p></article>
+        <article class="proof-item"><span>COMMERCIAL</span><h3>TCO / ROI 模型</h3><p>提供可编辑表格，拆分基础设施、运营、迁移与收益假设。</p></article>
+        <article class="proof-item"><span>RFP</span><h3>技术应答模板</h3><p>按需求编号追踪能力、限制、责任边界和证明材料。</p></article>
+        <article class="proof-item"><span>HANDOVER</span><h3>路线图与交付交接</h3><p>包含实施阶段、RACI、验收、风险、运行手册与培训要求。</p></article>
+      </div>
+      <div class="proof-boundary"><strong>真实性原则</strong><span>示例材料使用合成场景与假设数据。实际客户项目必须重新确认容量、合规、成本、组织能力和商业口径，不能直接把模板数字当作客户事实。</span></div>
+    </section>
+
+    <section class="section reveal">
+      <div class="section-head"><span class="section-index">06 / 面试可以直接这样讲</span><h2>90 秒口述版本。</h2></div>
+      <div class="script-box">
+        <blockquote id="interview-script">“我理解售前的核心不是介绍产品，而是<strong>降低客户决策风险</strong>。我通常先做需求调研，确认业务目标、现状基线、非功能指标和决策流程；再建立需求到能力的追踪矩阵，对不同方案做取舍；对于最大不确定性，用双方预先同意的指标和证据做 POC；进入正式采购时，用 RFP 逐项说明满足程度和偏差；同时建立 TCO/ROI，明确成本与收益假设；最后把承诺转成交付阶段、RACI、风险、回滚和验收门禁。FinCloud Sentinel 仓库里包含这一整套材料，并且 POC 指标能对应到真实代码和在线演示。”</blockquote>
+        <aside class="script-side"><span>表达结构</span><p>使用“发现—设计—证明—决策—交付”五段式。每一段都说清输入、产出和客户决策。</p><button class="copy-button" data-copy="#interview-script">复制口述稿</button></aside>
+      </div>
+    </section>
+
+    <section class="section reveal">
+      <div class="section-head"><span class="section-index">07 / 面试官继续追问</span><h2>四个高频问题。</h2></div>
+      <div class="question-grid">
+        <details><summary>客户一开始就指定某个产品怎么办？</summary><p>先尊重方向，再追问产品背后的目标和约束，确认它是强制标准、偏好还是尚未验证的假设。随后用需求追踪矩阵验证是否合适，并透明说明替代方案和迁移成本。</p></details>
+        <details><summary>POC 怎么避免变成无限期免费开发？</summary><p>在开始前锁定假设、范围、数据、时间、负责人、成功阈值和退出决策。新增需求进入变更清单，不直接扩进当前 POC；POC 只验证最大风险，不承担全部生产功能。</p></details>
+        <details><summary>TCO/ROI 数字不确定怎么办？</summary><p>不要制造精确幻觉。把已知、假设和范围分别标注，提供基准/乐观/保守三种情景和敏感性分析，并让业务、财务、技术共同确认口径。</p></details>
+        <details><summary>售前如何顺利交接给交付团队？</summary><p>把需求基线、架构决策、POC 证据、承诺、偏差、风险、RACI 和验收门禁放进同一交接包，安排联合评审，并确保未决事项都有 owner 和日期。</p></details>
+      </div>
+    </section>
+
+    <section class="section reveal">
+      <div class="section-head"><span class="section-index">08 / 不要这样说</span><h2>四个常见售前误区。</h2></div>
+      <div class="pitfall-list">
+        <article class="pitfall"><span>!</span><div><h3>“客户要什么我就配什么”</h3><p>解决方案师必须验证目标和约束，而不是把产品需求原样转成报价单。</p></div></article>
+        <article class="pitfall"><span>!</span><div><h3>“POC 跑通就证明能上生产”</h3><p>POC 只证明约定假设，生产还需容量、安全、合规、运营与迁移验证。</p></div></article>
+        <article class="pitfall"><span>!</span><div><h3>“ROI 一定很高”</h3><p>没有公开假设、时间范围和敏感性分析的 ROI 不可信。</p></div></article>
+        <article class="pitfall"><span>!</span><div><h3>“签约后交给实施就行”</h3><p>售前承诺若未进入交付基线，会形成范围、成本和信任风险。</p></div></article>
+      </div>
+    </section>
+
+    <section class="section reveal">
+      <div class="practice" data-practice>
+        <div class="practice-copy"><h3>学完后的自检</h3><p>尝试用一个真实岗位场景完成右侧四项，而不是只背流程名称。</p><div class="progress"><div class="progress-label"><span>掌握进度</span><span data-progress-text>0/4</span></div><div class="progress-track"><i data-progress></i></div></div></div>
+        <div class="checklist">
+          <label><input type="checkbox" /><b>✓</b><span>能列出一次需求调研必须问的业务、技术和决策问题。</span></label>
+          <label><input type="checkbox" /><b>✓</b><span>能为 POC 写出指标、阈值、证据、owner 和退出条件。</span></label>
+          <label><input type="checkbox" /><b>✓</b><span>能解释 RFP 偏差和 TCO/ROI 假设应该如何披露。</span></label>
+          <label><input type="checkbox" /><b>✓</b><span>能画出从售前承诺到交付验收的追踪关系。</span></label>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="page-footer">
+    <div class="pager"><a href="./03-ai-delivery.html"><span>← 上一篇</span><strong>AI 落地与治理</strong></a><a href="./05-engineering-evidence.html"><span>下一篇 →</span><strong>工程能力与公开证据</strong></a></div>
+    <div class="footer-note"><span>FinCloud Sentinel · 面试讲解材料</span><span>方案价值必须能被客户共同验证</span></div>
+  </footer>
+</body>
+</html>

@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="用通俗语言理解企业 AI 落地中的 RAG、脱敏、Guardrails、评测与人工确认。" />
+  <title>AI 落地与治理 · FinCloud Sentinel 面试讲解</title>
+  <link rel="stylesheet" href="./guide.css" />
+  <script defer src="./guide.js"></script>
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="./index.html"><span class="brand-mark">F</span><span>FinCloud <strong>讲解手册</strong></span></a>
+    <nav aria-label="五个讲解主题">
+      <a data-guide-link href="./01-financial-transaction.html">01 金融交易</a>
+      <a data-guide-link href="./02-cloud-architecture.html">02 云架构</a>
+      <a data-guide-link href="./03-ai-delivery.html">03 AI落地</a>
+      <a data-guide-link href="./04-presales-delivery.html">04 售前能力</a>
+      <a data-guide-link href="./05-engineering-evidence.html">05 工程能力</a>
+    </nav>
+    <a class="home-link" href="../">返回项目首页</a>
+  </header>
+
+  <main class="page-shell">
+    <section class="hero">
+      <div class="hero-copy">
+        <span class="kicker">03 / GOVERNED AI DELIVERY</span>
+        <h1>AI 落地，不是接一个聊天框。</h1>
+        <p>企业真正需要的是：回答有依据、输入先脱敏、提示注入被限制、质量可以回归、低置信度能降级，高影响动作必须由人确认。</p>
+        <div class="hero-meta"><span>建议阅读 12 分钟</span><span>面试讲解 90 秒</span><span>确定性降级 + 人工门禁</span></div>
+      </div>
+      <div class="hero-visual" aria-label="受控 AI 调查链路">
+        <div class="visual-title"><strong>一次受控 AI 调查</strong><span>GOVERNED LOOP</span></div>
+        <div class="visual-flow">
+          <div class="visual-node"><b>01</b><div><strong>Redact</strong><small>敏感信息先脱敏</small></div><em>最小数据</em></div>
+          <div class="visual-node"><b>02</b><div><strong>Retrieve</strong><small>检索版本化知识</small></div><em>有来源</em></div>
+          <div class="visual-node"><b>03</b><div><strong>Generate</strong><small>只基于证据诊断</small></div><em>可降级</em></div>
+          <div class="visual-node"><b>04</b><div><strong>Guard</strong><small>工具、注入与动作策略</small></div><em>有边界</em></div>
+          <div class="visual-node"><b>05</b><div><strong>Approve</strong><small>高影响动作人工确认</small></div><em>人负责</em></div>
+        </div>
+      </div>
+    </section>
+
+    <aside class="quick-answer"><span>一句话先懂</span><strong>受控 AI 的目标不是“回答得像人”，而是“只看该看的证据、不给无依据结论、越权动作做不了、质量下降时能被发现并安全降级”。</strong></aside>
+
+    <section class="section reveal">
+      <div class="section-head"><span class="section-index">01 / 先用生活例子理解</span><h2>把 AI 想成急诊室里的住院医师助手。</h2><p>它可以快速找病例和操作手册、整理症状、给出建议，但不能隐藏证据、不能泄露患者隐私，更不能未经主治医生确认就执行高风险治疗。</p></div>
+      <div class="analogy">
+        <div class="analogy-story"><small>生活类比</small><h3>助手可以提速，责任不能外包</h3><p>可靠的助手不是凭记忆“像懂一样回答”，而是先找到最新指南，标出依据和不确定性；隐私先处理；遇到危险指令要拒绝；真正改变患者状态的动作由医生签字。</p></div>
+        <div class="analogy-map">
+          <div class="map-row"><span>查最新诊疗指南</span><b>→</b><p>RAG：先检索企业知识，再生成带来源的回答。</p></div>
+          <div class="map-row"><span>遮盖患者隐私</span><b>→</b><p>脱敏：令牌、密码、身份证明等在进入模型前被移除。</p></div>
+          <div class="map-row"><span>药物禁忌和权限</span><b>→</b><p>Guardrails：检测注入、限制工具、约束输出和动作风险。</p></div>
+          <div class="map-row"><span>定期病例考试</span><b>→</b><p>评测：固定用例持续检查检索、引用、安全、时延和降级。</p></div>
+          <div class="map-row"><span>主治医生签字</span><b>→</b><p>人工确认：对资金、权限和生产配置变更保留责任门禁。</p></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section reveal">
+      <div class="section-head"><span class="section-index">02 / 五个核心能力</span><h2>从“能回答”走到“可治理”。</h2><p>企业 AI 的技术主线不是模型越大越好，而是知识、数据、策略、质量和责任能够闭环。</p></div>
+      <div class="concept-grid">
+        <article class="concept-card"><span>01</span><h3>RAG 检索增强生成</h3><p>先把问题变成检索查询，召回相关 Runbook 或业务文档，再把片段和来源交给生成步骤。答案必须能指回原文。</p><code>question → retrieve → rerank<br />→ grounded answer + citations</code></article>
+        <article class="concept-card"><span>02</span><h3>数据脱敏 Redaction</h3><p>采用数据最小化原则，只提供完成任务所需字段。API key、token、密码、个人数据和密钥模式在日志与模型输入前清除。</p><code>raw evidence → policy filter<br />→ [REDACTED] → model</code></article>
+        <article class="concept-card"><span>03</span><h3>Guardrails 护栏</h3><p>输入侧检测提示注入，检索侧限制知识范围，工具侧使用白名单，输出侧检查引用和敏感信息，动作侧按风险分类。</p><code>input / retrieval / output / tool<br />four boundaries, not one prompt</code></article>
+        <article class="concept-card"><span>04</span><h3>评测 Evaluation</h3><p>离线回归检查检索命中、引用完整性、答案正确性和安全策略；线上监控时延、错误率、拒答率、人工接管率与漂移。</p><code>golden cases + adversarial cases<br />quality gate before release</code></article>
+        <article class="concept-card"><span>05</span><h3>人工确认 Human-in-the-loop</h3><p>只读查询可以自动执行；修改配置、暂停资金通道等高影响动作必须展示依据、影响范围和可回滚方案，由授权人员确认。</p><code>READ_ONLY → auto<br />MUTATING / FINANCIAL → approve</code></article>
+        <article class="concept-card"><span>06</span><h3>安全降级 Fallback</h3><p>模型超时、置信度不足或评测不达标时，退回确定性规则、只读查询或人工流程，而不是用不可靠结果继续自动化。</p><code>model unavailable<br />→ deterministic safe mode</code></article>
+      </div>
+    </section>
+
+    <section class="section reveal">
+      <div class="section-head"><span class="section-index">03 / 一次事故调查如何完成</span><h2>先收集证据，再建议动作；建议与执行分离。</h2></div>
+      <div class="flow">
+        <article class="flow-step"><span>STEP 01</span><h3>接收最小上下文</h3><p>事故编号、严重级别、指标、脱敏日志和交易编号进入调查请求。</p></article>
+        <article class="flow-step"><span>STEP 02</span><h3>检索知识</h3><p>从版本化 Runbook 中召回最相关片段，保留文件名、摘录和得分。</p></article>
+        <article class="flow-step"><span>STEP 03</span><h3>生成有据诊断</h3><p>将事实、假设、置信度与证据分开；证据不足时明确说“不足”。</p></article>
+        <article class="flow-step"><span>STEP 04</span><h3>动作策略判定</h3><p>只读工具可自动调用；越权、修改或资金动作被强制标为需要审批。</p></article>
+        <article class="flow-step"><span>STEP 05</span><h3>人审与审计</h3><p>操作员查看引用和影响，明确批准后才执行，并记录谁在何时做了什么。</p></article>
+      </div>
+    </section>
+
+    <section class="section reveal">
+      <div class="section-head"><span class="section-index">04 / 五类质量问题如何防</span><h2>模型问题不能只靠“提示词写好一点”。</h2></div>
+      <div class="compare-wrap"><table class="compare">
+        <thead><tr><th>风险</th><th>表现</th><th>控制</th><th>验证指标</th></tr></thead>
+        <tbody>
+          <tr><td>幻觉</td><td>没有证据却给出确定结论</td><td>强制引用、证据不足拒答、确定性降级</td><td>Groundedness、引用准确率</td></tr>
+          <tr><td>提示注入</td><td>文档或用户要求绕过策略</td><td>输入检测、指令与数据隔离、工具白名单</td><td>攻击用例通过率</td></tr>
+          <tr><td>敏感信息泄露</td><td>日志或输出出现 token、密码、个人信息</td><td>输入前脱敏、输出扫描、最小权限</td><td>泄露用例为 0</td></tr>
+          <tr><td>模型退化</td><td>升级后召回、答案或时延变差</td><td>版本化模型/提示/知识库，离线评测守门</td><td>质量阈值、P95 时延</td></tr>
+          <tr><td>越权执行</td><td>AI 直接修改生产或资金状态</td><td>动作分级、策略引擎、人工审批与审计</td><td>未审批高风险动作 = 0</td></tr>
+        </tbody>
+      </table></div>
+    </section>
+
+    <section class="project-proof reveal">
+      <span class="section-index">05 / FINCLOUD SENTINEL 中如何落地</span>
+      <h2>先证明治理闭环，再替换成真实模型。</h2>
+      <p>当前实现故意使用确定性诊断和词法检索，便于离线测试每条安全规则；生产方案可以替换向量检索与模型推理，但审批和证据契约保持不变。</p>
+      <div class="proof-grid">
+        <article class="proof-item"><span>KNOWLEDGE</span><h3>版本化 Runbook</h3><p>链上确认延迟、重复事件、账本对账、模型超时等知识以 Markdown 入库。</p></article>
+        <article class="proof-item"><span>RETRIEVAL</span><h3>可重复词法检索</h3><p>根据事故标题、症状、指标和日志召回片段，输出 source、excerpt 与 score。</p></article>
+        <article class="proof-item"><span>REDACTION</span><h3>密钥模式脱敏</h3><p>API key、token、password 及常见云访问键在分析和引用前替换。</p></article>
+        <article class="proof-item"><span>GUARDRAIL</span><h3>注入与工具策略</h3><p>检测绕过指令；只读工具白名单自动放行，其余动作一律要求审批。</p></article>
+        <article class="proof-item"><span>EVAL</span><h3>4/4 固定评测</h3><p>每个事故必须命中预期 Runbook、有非空证据，且高风险动作不能绕过审批。</p></article>
+        <article class="proof-item"><span>OBSERVE</span><h3>FastAPI 与指标</h3><p>调查 API 暴露健康、就绪与 Prometheus 请求量/时延指标。</p></article>
+      </div>
+      <div class="proof-boundary"><strong>边界说明</strong><span>Pages 上的调查助手明确标注为离线确定性模式，不冒充在线 LLM；生产接入百炼、PAI-EAS 或其他模型后，还需补充向量库、模型版本、提示模板、线上评测、成本与合规控制。</span></div>
+    </section>
+
+    <section class="section reveal">
+      <div class="section-head"><span class="section-index">06 / 面试可以直接这样讲</span><h2>90 秒口述版本。</h2></div>
+      <div class="script-box">
+        <blockquote id="interview-script">“我把企业 AI 落地拆成五个治理环节。第一是 <strong>RAG</strong>，回答前先检索版本化知识并保留引用；第二是<strong>脱敏</strong>，敏感字段在进入模型前最小化；第三是 <strong>Guardrails</strong>，分别约束输入、检索、输出和工具；第四是<strong>评测</strong>，用固定和对抗用例守住检索、引用、安全与时延阈值；第五是<strong>人工确认</strong>，只读动作可以自动执行，修改和资金类动作必须审批。我的项目用确定性检索和诊断先把这些契约做成可测试闭环，未来替换真实模型时，证据、降级和审批边界仍然不变。”</blockquote>
+        <aside class="script-side"><span>表达结构</span><p>重点不是说会用多少模型，而是能把知识、数据、安全、质量和责任完整串起来。</p><button class="copy-button" data-copy="#interview-script">复制口述稿</button></aside>
+      </div>
+    </section>
+
+    <section class="section reveal">
+      <div class="section-head"><span class="section-index">07 / 面试官继续追问</span><h2>四个高频问题。</h2></div>
+      <div class="question-grid">
+        <details><summary>RAG 为什么仍然会幻觉？</summary><p>检索可能召回错误或过期内容，模型也可能忽略证据。因此要做文档版本治理、召回与重排评测、引用校验、证据不足拒答，并把事实与推断分开。</p></details>
+        <details><summary>Guardrails 是不是一段 system prompt？</summary><p>不是。提示词只是软约束。可靠护栏还包括数据过滤、身份权限、工具白名单、结构化输出校验、动作策略、速率限制和审计，关键控制必须在模型之外执行。</p></details>
+        <details><summary>评测应该看哪些指标？</summary><p>离线看召回率、引用准确率、答案正确性、安全攻击通过率；线上看时延、错误率、拒答率、人工接管率、用户反馈和成本。高风险场景还要看未审批动作是否为零。</p></details>
+        <details><summary>为什么不让 AI 自动处理事故？</summary><p>可以自动完成低风险只读查询和证据整理，但事故中的错误动作可能扩大影响。建议与执行分离、最小权限、可回滚和人工审批能让责任清晰。</p></details>
+      </div>
+    </section>
+
+    <section class="section reveal">
+      <div class="section-head"><span class="section-index">08 / 不要这样说</span><h2>四个常见 AI 包装误区。</h2></div>
+      <div class="pitfall-list">
+        <article class="pitfall"><span>!</span><div><h3>“接入大模型就有智能运维”</h3><p>没有知识、遥测、工具权限、评测和流程，模型只是新的不确定接口。</p></div></article>
+        <article class="pitfall"><span>!</span><div><h3>“用了 RAG 就不会幻觉”</h3><p>RAG 降低而非消除幻觉，仍需引用校验、拒答和回归评测。</p></div></article>
+        <article class="pitfall"><span>!</span><div><h3>“数据都在内网所以不用脱敏”</h3><p>内部泄露、日志扩散和供应链风险仍存在，应坚持最小数据和分级权限。</p></div></article>
+        <article class="pitfall"><span>!</span><div><h3>“人工确认会影响自动化效率”</h3><p>只对高影响动作保留门禁，低风险只读步骤仍可自动化，整体反而更可运营。</p></div></article>
+      </div>
+    </section>
+
+    <section class="section reveal">
+      <div class="practice" data-practice>
+        <div class="practice-copy"><h3>学完后的自检</h3><p>如果能用自己的话解释右侧四项，就已经从“模型使用者”进入“AI 方案设计者”。</p><div class="progress"><div class="progress-label"><span>掌握进度</span><span data-progress-text>0/4</span></div><div class="progress-track"><i data-progress></i></div></div></div>
+        <div class="checklist">
+          <label><input type="checkbox" /><b>✓</b><span>能画出检索、引用、生成和拒答的 RAG 链路。</span></label>
+          <label><input type="checkbox" /><b>✓</b><span>能列出输入、检索、输出和工具四层 Guardrails。</span></label>
+          <label><input type="checkbox" /><b>✓</b><span>能区分离线评测、线上指标与安全对抗用例。</span></label>
+          <label><input type="checkbox" /><b>✓</b><span>能解释什么可以自动执行，什么必须人工确认。</span></label>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="page-footer">
+    <div class="pager"><a href="./02-cloud-architecture.html"><span>← 上一篇</span><strong>云架构与灾备</strong></a><a href="./04-presales-delivery.html"><span>下一篇 →</span><strong>售前与方案交付</strong></a></div>
+    <div class="footer-note"><span>FinCloud Sentinel · 面试讲解材料</span><span>模型能力可以替换，治理边界必须保留</span></div>
+  </footer>
+</body>
+</html>

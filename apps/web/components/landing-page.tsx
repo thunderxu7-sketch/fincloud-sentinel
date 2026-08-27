@@ -28,7 +28,7 @@ const copy = {
     openConsole: "Open control plane",
     inspectArchitecture: "Inspect architecture",
     proof: "Reference implementation · Synthetic data only · No real funds",
-    metrics: [["Automated checks", "20"], ["Browser workflows", "3 E2E"], ["Architecture domains", "9"], ["Versioned runbooks", "7"]],
+    metrics: [["Automated checks", "20"], ["Browser workflows", "4 E2E"], ["Architecture domains", "9"], ["Versioned runbooks", "7"]],
     surfaceIndex: "01 / PRODUCT SURFACES",
     surfaceTitle: "One entry point, three dedicated work surfaces.",
     surfaceSub: "The marketing story, operator workflow, architecture decisions, and incident procedures now live on separate routes with clear responsibilities.",
@@ -46,7 +46,19 @@ const copy = {
       ["Production readiness", "OpenTelemetry, SLOs, containers, Helm, Terraform, security scans, and rollback procedures."],
       ["Solution practice", "Discovery, NFRs, POC scorecards, RFP response, TCO model, and executive proposal."],
     ],
-    packIndex: "03 / PRESALES EVIDENCE PACK",
+    guidesIndex: "03 / INTERVIEW EXPLAINERS",
+    guidesTitle: "Five capabilities, explained without the jargon.",
+    guidesSub: "Each standalone guide starts with a familiar analogy, then connects the concept to implementation evidence, follow-up questions, and a 90-second interview answer.",
+    guideItems: [
+      ["01", "Financial transactions", "Idempotency, state machines, double-entry accounting, reconciliation, and risk control.", "guides/01-financial-transaction.html"],
+      ["02", "Cloud architecture", "Containers, Kubernetes, Helm, Terraform, observability, and disaster recovery.", "guides/02-cloud-architecture.html"],
+      ["03", "AI delivery", "RAG, redaction, guardrails, evaluation, and explicit human approval.", "guides/03-ai-delivery.html"],
+      ["04", "Presales delivery", "Discovery, solution selection, POC, RFP, TCO/ROI, and delivery planning.", "guides/04-presales-delivery.html"],
+      ["05", "Engineering evidence", "Tests, CI, CodeQL, Trivy, public code, and an online demonstration.", "guides/05-engineering-evidence.html"],
+    ],
+    openGuide: "Read explainer",
+    openAllGuides: "Open the complete guide",
+    packIndex: "04 / PRESALES EVIDENCE PACK",
     packTitle: "From discovery to a measurable decision.",
     packSub: "Architecture alone is not a solution engagement. The project includes the artifacts needed to qualify, prove, secure, cost, and hand over the platform.",
     packItems: ["Discovery and NFRs", "POC acceptance scorecard", "Security and compliance", "DR and continuity", "TCO and ROI", "Deployment handover"],
@@ -59,7 +71,7 @@ const copy = {
     openConsole: "打开控制平台",
     inspectArchitecture: "查看解决方案架构",
     proof: "参考实现 · 仅使用合成数据 · 不涉及真实资金",
-    metrics: [["自动化检查", "20"], ["浏览器流程", "3 E2E"], ["架构领域", "9"], ["版本化手册", "7"]],
+    metrics: [["自动化检查", "20"], ["浏览器流程", "4 E2E"], ["架构领域", "9"], ["版本化手册", "7"]],
     surfaceIndex: "01 / 产品功能面",
     surfaceTitle: "一个入口，三个职责清晰的工作面。",
     surfaceSub: "产品介绍、操作工作流、架构决策与事故处置已拆分到独立路由，不再混在一张长页面中。",
@@ -77,7 +89,19 @@ const copy = {
       ["生产准备", "OpenTelemetry、SLO、容器、Helm、Terraform、安全扫描与回滚流程。"],
       ["售前实践", "需求访谈、NFR、POC计分卡、RFP应答、TCO模型与高层方案。"],
     ],
-    packIndex: "03 / 售前证据包",
+    guidesIndex: "03 / 面试通俗讲解",
+    guidesTitle: "五项能力，不堆名词也能讲清楚。",
+    guidesSub: "每篇独立 HTML 都从生活类比出发，再连到实现证据、高频追问与 90 秒面试口述稿。",
+    guideItems: [
+      ["01", "金融交易", "幂等、状态机、复式记账、对账与风险控制。", "guides/01-financial-transaction.html"],
+      ["02", "云架构", "容器、Kubernetes、Helm、Terraform、监控与灾备。", "guides/02-cloud-architecture.html"],
+      ["03", "AI 落地", "RAG、数据脱敏、Guardrails、评测与人工确认。", "guides/03-ai-delivery.html"],
+      ["04", "售前能力", "需求调研、方案选型、POC、RFP、TCO/ROI 与交付规划。", "guides/04-presales-delivery.html"],
+      ["05", "工程能力", "测试、CI、CodeQL、Trivy、公开代码与在线演示。", "guides/05-engineering-evidence.html"],
+    ],
+    openGuide: "阅读讲解",
+    openAllGuides: "打开完整手册",
+    packIndex: "04 / 售前证据包",
     packTitle: "从需求发现走到可衡量的生产决策。",
     packSub: "只有架构图还不算解决方案。本项目同时提供需求澄清、验证、安全、成本分析和交付所需材料。",
     packItems: ["需求访谈与NFR", "POC验收计分卡", "安全与合规", "容灾与业务连续性", "TCO与ROI", "部署交接"],
@@ -87,6 +111,7 @@ const copy = {
 
 const surfaceIcons: LucideIcon[] = [CircleDollarSign, CloudCog, FileCheck2];
 const evidenceIcons: LucideIcon[] = [Database, SearchCheck, Gauge, CheckCircle2];
+const guideIcons: LucideIcon[] = [CircleDollarSign, CloudCog, Bot, FileCheck2, SearchCheck];
 
 export function LandingPage() {
   const { locale } = useLocale();
@@ -143,6 +168,22 @@ export function LandingPage() {
           {t.evidenceCards.map(([title, description], index) => {
             const Icon = evidenceIcons[index];
             return <article key={title}><span><Icon size={22} /></span><h3>{title}</h3><p>{description}</p><div className="evidence-check"><CheckCircle2 size={15} /> VERIFIED IN REPOSITORY</div></article>;
+          })}
+        </div>
+      </section>
+
+      <section className="section interview-guides">
+        <div className="section-heading compact"><div><span className="section-index">{t.guidesIndex}</span><h2>{t.guidesTitle}</h2><p>{t.guidesSub}</p></div><a className="secondary-button" href="guides/index.html">{t.openAllGuides}<ArrowRight size={17} /></a></div>
+        <div className="guide-link-grid">
+          {t.guideItems.map(([number, title, description, href], index) => {
+            const Icon = guideIcons[index];
+            return (
+              <a className="guide-link-card" href={href} key={href}>
+                <div><span>{number}</span><Icon size={20} /></div>
+                <h3>{title}</h3><p>{description}</p>
+                <strong>{t.openGuide}<ArrowRight size={15} /></strong>
+              </a>
+            );
           })}
         </div>
       </section>

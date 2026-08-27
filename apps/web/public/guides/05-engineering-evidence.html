@@ -1,0 +1,159 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="用通俗语言理解测试、CI、CodeQL、Trivy、公开代码与在线演示如何形成工程证据。" />
+  <title>工程能力与公开证据 · FinCloud Sentinel 面试讲解</title>
+  <link rel="stylesheet" href="./guide.css" />
+  <script defer src="./guide.js"></script>
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="./index.html"><span class="brand-mark">F</span><span>FinCloud <strong>讲解手册</strong></span></a>
+    <nav aria-label="五个讲解主题">
+      <a data-guide-link href="./01-financial-transaction.html">01 金融交易</a>
+      <a data-guide-link href="./02-cloud-architecture.html">02 云架构</a>
+      <a data-guide-link href="./03-ai-delivery.html">03 AI落地</a>
+      <a data-guide-link href="./04-presales-delivery.html">04 售前能力</a>
+      <a data-guide-link href="./05-engineering-evidence.html">05 工程能力</a>
+    </nav>
+    <a class="home-link" href="../">返回项目首页</a>
+  </header>
+
+  <main class="page-shell">
+    <section class="hero">
+      <div class="hero-copy">
+        <span class="kicker">05 / ENGINEERING EVIDENCE</span>
+        <h1>工程能力，不是“我会”，而是“我能证明”。</h1>
+        <p>测试证明关键规则可回归，CI 保证每次变更重复执行，CodeQL 和 Trivy 检查安全风险，公开代码让设计可审查，在线演示证明结果真的能够运行。</p>
+        <div class="hero-meta"><span>建议阅读 10 分钟</span><span>面试讲解 90 秒</span><span>代码 → 测试 → 扫描 → 部署 → 验证</span></div>
+      </div>
+      <div class="hero-visual" aria-label="持续交付质量门禁">
+        <div class="visual-title"><strong>一次提交的证据链</strong><span>QUALITY GATES</span></div>
+        <div class="visual-flow">
+          <div class="visual-node"><b>01</b><div><strong>Test</strong><small>规则、API、AI、浏览器</small></div><em>正确性</em></div>
+          <div class="visual-node"><b>02</b><div><strong>CI</strong><small>每次提交重复执行</small></div><em>一致性</em></div>
+          <div class="visual-node"><b>03</b><div><strong>Scan</strong><small>CodeQL · Trivy · Gitleaks</small></div><em>安全性</em></div>
+          <div class="visual-node"><b>04</b><div><strong>Build</strong><small>Web · API · AI images</small></div><em>可交付</em></div>
+          <div class="visual-node"><b>05</b><div><strong>Deploy & Verify</strong><small>Pages + live workflow</small></div><em>可证明</em></div>
+        </div>
+      </div>
+    </section>
+
+    <aside class="quick-answer"><span>一句话先懂</span><strong>成熟工程不是让代码“在我电脑上能跑”，而是把正确性、安全性、可构建性和线上行为变成任何人都能重复检查的证据。</strong></aside>
+
+    <section class="section reveal">
+      <div class="section-head"><span class="section-index">01 / 先用生活例子理解</span><h2>把软件交付想成一架飞机起飞。</h2><p>飞行员经验丰富很重要，但航空安全不能只依赖“相信他”。飞机需要检查单、双人复核、黑匣子、维护记录和每次起飞前重复执行的门禁。</p></div>
+      <div class="analogy">
+        <div class="analogy-story"><small>生活类比</small><h3>能力要固化成流程和记录</h3><p>单元测试像检查一个仪表；端到端测试像完整滑行；CI 是每次起飞都自动执行检查单；安全扫描检查已知和潜在结构风险；公开代码与在线演示像适航证和试飞记录。</p></div>
+        <div class="analogy-map">
+          <div class="map-row"><span>部件检测</span><b>→</b><p>单元测试验证金额、状态机、风险和账本等小范围规则。</p></div>
+          <div class="map-row"><span>整机滑行</span><b>→</b><p>集成与 E2E 测试验证多个组件组合后的真实用户路径。</p></div>
+          <div class="map-row"><span>起飞检查单</span><b>→</b><p>CI 在干净环境中重复安装、检查、构建、扫描和发布。</p></div>
+          <div class="map-row"><span>结构与材料检查</span><b>→</b><p>CodeQL、Trivy、Gitleaks 检查代码、依赖、镜像、IaC 和秘密。</p></div>
+          <div class="map-row"><span>适航与试飞记录</span><b>→</b><p>公开仓库、Actions 结果与在线演示让第三方独立验证。</p></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section reveal">
+      <div class="section-head"><span class="section-index">02 / 五类工程证据</span><h2>每类证据回答一个不同问题。</h2></div>
+      <div class="concept-grid">
+        <article class="concept-card"><span>01</span><h3>测试 Tests</h3><p>单元测试验证纯规则，API 测试验证契约，AI 评测验证知识和策略，E2E 验证用户真实路径。重点覆盖资金不变量和故障分支。</p><code>fast rules → service contract<br />→ browser control loop</code></article>
+        <article class="concept-card"><span>02</span><h3>持续集成 CI</h3><p>每次 push 和 PR 都从干净环境安装依赖，执行 lint、类型、测试、文档、API 契约、构建与安全检查，失败就阻止合并。</p><code>change → reproducible gates<br />green commit ≠ local promise</code></article>
+        <article class="concept-card"><span>03</span><h3>CodeQL</h3><p>把代码转换为可查询的语义数据库，沿数据流寻找注入、不安全调用等模式。它比简单文本搜索更理解变量如何传播。</p><code>source → semantic database<br />→ security queries → finding</code></article>
+        <article class="concept-card"><span>04</span><h3>Trivy 与供应链扫描</h3><p>检查依赖和镜像中的已知 CVE，也扫描文件系统和 IaC 配置。结合严重级别、可修复性和实际暴露面决定门禁。</p><code>dependencies + image + IaC<br />→ CVE / misconfiguration</code></article>
+        <article class="concept-card"><span>05</span><h3>公开代码 Public Code</h3><p>仓库展示真实提交历史、架构决策、测试、CI 和安全策略。评审者可以验证实现是否与简历描述一致。</p><code>claim → source → test → workflow<br />traceable engineering evidence</code></article>
+        <article class="concept-card"><span>06</span><h3>在线演示 Live Demo</h3><p>在线页面证明构建和部署成立，交互流程证明不是静态截图。配合边界说明，既有可用性又不冒充生产系统。</p><code>deployed SHA → public URL<br />→ observable user workflow</code></article>
+      </div>
+    </section>
+
+    <section class="section reveal">
+      <div class="section-head"><span class="section-index">03 / 一次提交如何变成可信版本</span><h2>只有全部门禁通过，提交才获得“可交付”资格。</h2></div>
+      <div class="flow">
+        <article class="flow-step"><span>STEP 01</span><h3>静态与快速检查</h3><p>lint、类型检查、格式和 API 契约尽快反馈明显错误。</p></article>
+        <article class="flow-step"><span>STEP 02</span><h3>规则与服务测试</h3><p>运行领域、API、Python 及 AI 评测，验证关键不变量和安全策略。</p></article>
+        <article class="flow-step"><span>STEP 03</span><h3>浏览器 E2E</h3><p>在真实 Chromium 中完成交易闭环、双语移动端和独立页面导航。</p></article>
+        <article class="flow-step"><span>STEP 04</span><h3>安全与制品验证</h3><p>CodeQL、Trivy、Gitleaks、Helm/Terraform 校验和三个容器镜像构建并行执行。</p></article>
+        <article class="flow-step"><span>STEP 05</span><h3>部署与线上复核</h3><p>发布 GitHub Pages 后，再运行线上操作链路，确认资产、路由和交互没有部署差异。</p></article>
+      </div>
+    </section>
+
+    <section class="section reveal">
+      <div class="section-head"><span class="section-index">04 / 测什么、为什么测</span><h2>测试数量不是目标，风险覆盖才是。</h2></div>
+      <div class="compare-wrap"><table class="compare">
+        <thead><tr><th>层级</th><th>主要风险</th><th>典型用例</th><th>失败时说明</th></tr></thead>
+        <tbody>
+          <tr><td>领域单元测试</td><td>资金和状态规则错误</td><td>金额精度、非法跳转、借贷平衡、对账问题码</td><td>核心业务不变量被破坏</td></tr>
+          <tr><td>API 测试</td><td>接口契约或组合逻辑错误</td><td>创建交易、幂等重放、风险响应、指标</td><td>服务边界与领域层不一致</td></tr>
+          <tr><td>AI 评测</td><td>召回错误、证据缺失或越权动作</td><td>预期 Runbook、非空引用、审批策略</td><td>模型/知识/策略不能安全发布</td></tr>
+          <tr><td>浏览器 E2E</td><td>组件组合、事件或路由失效</td><td>审核—结算—对账—调查—隔离</td><td>用户实际工作流不可用</td></tr>
+          <tr><td>安全扫描</td><td>代码缺陷、CVE、配置和秘密泄露</td><td>CodeQL、Trivy、Gitleaks</td><td>安全基线不满足或需风险评估</td></tr>
+          <tr><td>部署验证</td><td>构建成功但线上资源或路径错误</td><td>Pages 子路径、容器镜像、在线实操</td><td>交付制品与本地行为不一致</td></tr>
+        </tbody>
+      </table></div>
+    </section>
+
+    <section class="project-proof reveal">
+      <span class="section-index">05 / FINCLOUD SENTINEL 中如何落地</span>
+      <h2>工程主张全部能沿仓库追溯。</h2>
+      <p>项目当前将功能正确性、安全、平台配置、容器制品和公开部署纳入同一套自动化门禁。</p>
+      <div class="proof-grid">
+        <article class="proof-item"><span>TESTS</span><h3>20 个代码级检查</h3><p>9 个领域、4 个 API、4 个 Web、3 个 Python 测试覆盖核心实现。</p></article>
+        <article class="proof-item"><span>E2E</span><h3>4 条浏览器流程</h3><p>完整控制闭环、英文移动端交易、独立页面导航与五篇讲解发布。</p></article>
+        <article class="proof-item"><span>AI EVAL</span><h3>4/4 评测门禁</h3><p>预期知识命中、证据存在且高风险动作必须审批。</p></article>
+        <article class="proof-item"><span>SECURITY</span><h3>CodeQL + Trivy + Gitleaks</h3><p>语义代码分析、依赖/文件系统/IaC 扫描以及秘密检测。</p></article>
+        <article class="proof-item"><span>PLATFORM</span><h3>Helm / Terraform / Compose</h3><p>Chart lint/template、Terraform fmt/init/validate 与 Compose 配置校验。</p></article>
+        <article class="proof-item"><span>DELIVERY</span><h3>镜像与 Pages</h3><p>Web、Core API、AI Copilot 镜像构建，Pages 自动部署并执行线上复核。</p></article>
+      </div>
+      <div class="proof-boundary"><strong>证据口径</strong><span>自动化通过只证明当前用例和规则覆盖的范围，不等于“零缺陷”或生产认证。生产交付还需要真实负载、安全评审、渗透测试、变更治理和持续运营数据。</span></div>
+    </section>
+
+    <section class="section reveal">
+      <div class="section-head"><span class="section-index">06 / 面试可以直接这样讲</span><h2>90 秒口述版本。</h2></div>
+      <div class="script-box">
+        <blockquote id="interview-script">“我会把工程能力转成五类可验证证据。第一是<strong>测试</strong>，用单元、API、AI 评测和 E2E 分层覆盖资金规则与用户流程；第二是 <strong>CI</strong>，让每次提交在干净环境重复执行检查；第三是<strong>安全扫描</strong>，CodeQL 查语义代码风险，Trivy 查依赖、镜像和 IaC，Gitleaks 防秘密进入仓库；第四是<strong>公开代码</strong>，让架构决策、测试和提交历史可审查；第五是<strong>在线演示</strong>，证明构建、部署和真实交互成立。FinCloud Sentinel 当前有 20 个代码级测试、4 条浏览器流程、4/4 AI 评测，并在 CI 中构建三个镜像、校验平台配置和自动部署 Pages。”</blockquote>
+        <aside class="script-side"><span>表达结构</span><p>不要只报测试数量；要说每个门禁防什么风险，以及第三方在哪里看到证据。</p><button class="copy-button" data-copy="#interview-script">复制口述稿</button></aside>
+      </div>
+    </section>
+
+    <section class="section reveal">
+      <div class="section-head"><span class="section-index">07 / 面试官继续追问</span><h2>四个高频问题。</h2></div>
+      <div class="question-grid">
+        <details><summary>单元测试很多，为什么还需要 E2E？</summary><p>单元测试快、定位准，适合业务不变量；但它无法证明浏览器事件、组件组合、静态路由和下载等真实用户路径。E2E 数量应少而关键，覆盖最有价值的闭环。</p></details>
+        <details><summary>CodeQL 和 Trivy 有什么区别？</summary><p>CodeQL 主要分析源码语义和数据流，寻找代码层漏洞模式；Trivy 主要检查依赖与镜像 CVE、文件系统秘密和 IaC 配置。两者覆盖面不同，需要结合人工审查。</p></details>
+        <details><summary>扫描发现 HIGH 漏洞就一定阻止发布吗？</summary><p>应结合是否可修复、是否实际可达、运行权限和补偿控制判断，但必须有明确策略、owner 和到期日。金融核心通常对可利用高危问题采用 fail-closed。</p></details>
+        <details><summary>公开代码如何避免泄密？</summary><p>只放合成数据和参考配置；使用秘密扫描、最小化示例、环境变量占位、提交前检查和历史清理流程。公开仓库不应包含真实客户、密钥、内网地址或受限文档。</p></details>
+      </div>
+    </section>
+
+    <section class="section reveal">
+      <div class="section-head"><span class="section-index">08 / 不要这样说</span><h2>四个常见工程包装误区。</h2></div>
+      <div class="pitfall-list">
+        <article class="pitfall"><span>!</span><div><h3>“CI 绿了，所以没有 Bug”</h3><p>CI 只证明已定义门禁通过，未知风险和缺失用例仍需要评审与监控。</p></div></article>
+        <article class="pitfall"><span>!</span><div><h3>“覆盖率 100% 就质量高”</h3><p>覆盖率不衡量断言价值，关键是风险场景、不变量和失败分支。</p></div></article>
+        <article class="pitfall"><span>!</span><div><h3>“安全工具没报错就是安全”</h3><p>扫描会漏报和误报，还需要威胁建模、人工评审、运行时控制与响应流程。</p></div></article>
+        <article class="pitfall"><span>!</span><div><h3>“有在线页面就是生产经验”</h3><p>演示证明可运行，不等于真实容量、客户数据、合规与运营责任。</p></div></article>
+      </div>
+    </section>
+
+    <section class="section reveal">
+      <div class="practice" data-practice>
+        <div class="practice-copy"><h3>学完后的自检</h3><p>把自己的任一项目放进这条证据链，看看哪些主张仍然只有口头描述。</p><div class="progress"><div class="progress-label"><span>掌握进度</span><span data-progress-text>0/4</span></div><div class="progress-track"><i data-progress></i></div></div></div>
+        <div class="checklist">
+          <label><input type="checkbox" /><b>✓</b><span>能说明单元、API、AI 评测与 E2E 各自防什么风险。</span></label>
+          <label><input type="checkbox" /><b>✓</b><span>能解释 CI 如何从提交走到可部署制品。</span></label>
+          <label><input type="checkbox" /><b>✓</b><span>能区分 CodeQL、Trivy 和 Gitleaks 的职责。</span></label>
+          <label><input type="checkbox" /><b>✓</b><span>能用公开仓库、Actions 和在线演示证明自己的工程主张。</span></label>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="page-footer">
+    <div class="pager"><a href="./04-presales-delivery.html"><span>← 上一篇</span><strong>售前与方案交付</strong></a><a href="./index.html"><span>完成五篇 →</span><strong>返回总目录复习</strong></a></div>
+    <div class="footer-note"><span>FinCloud Sentinel · 面试讲解材料</span><span>主张必须能沿代码、测试和部署追溯</span></div>
+  </footer>
+</body>
+</html>

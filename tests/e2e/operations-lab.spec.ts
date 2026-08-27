@@ -66,3 +66,17 @@ test("exposes dedicated landing, architecture, runbook, and control-plane routes
   await expect(page).toHaveURL(/\/console\/$/);
   await expect(page.getByTestId("control-plane-page")).toBeVisible();
 });
+
+test("publishes five linked interview explainers", async ({ page }) => {
+  await page.goto("/guides/index.html");
+  await expect(page.getByRole("heading", { name: "五项能力，从“会说”到“能证明”。" })).toBeVisible();
+  await expect(page.locator(".guide-directory > a")).toHaveCount(5);
+
+  await page.locator(".guide-directory").getByRole("link", { name: /金融交易保障/ }).click();
+  await expect(page).toHaveURL(/\/guides\/01-financial-transaction\.html$/);
+  await expect(page.getByRole("heading", { name: "一笔钱，为什么不能只靠“接口成功”？" })).toBeVisible();
+
+  await page.getByRole("link", { name: "03 AI落地" }).click();
+  await expect(page).toHaveURL(/\/guides\/03-ai-delivery\.html$/);
+  await expect(page.getByRole("heading", { name: "AI 落地，不是接一个聊天框。" })).toBeVisible();
+});

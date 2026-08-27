@@ -9,6 +9,7 @@
 [![Synthetic data](https://img.shields.io/badge/data-synthetic%20only-c9f31d)](#responsible-use)
 
 **[Live bilingual demo / 中英文演示](https://thunderxu7-sketch.github.io/fincloud-sentinel/)** ·
+[Five interview explainers / 五项面试讲解](https://thunderxu7-sketch.github.io/fincloud-sentinel/guides/) ·
 [Presales evidence pack / 售前材料](docs/presales/README.md) ·
 [Architecture](docs/architecture/high-level-design.md) ·
 [OpenAPI](docs/api/openapi.yaml)
@@ -32,6 +33,21 @@ FinCloud Sentinel 是面向金融科技解决方案架构师 / FDE 的可运行�
 | Control plane | Transaction, risk, settlement, reconciliation, and containment | [Console](https://thunderxu7-sketch.github.io/fincloud-sentinel/console/) |
 | Architecture | Production topology, decisions, and deployment modes | [Architecture](https://thunderxu7-sketch.github.io/fincloud-sentinel/architecture/) |
 | Runbooks | Incident procedures and signal-to-control matrix | [Runbooks](https://thunderxu7-sketch.github.io/fincloud-sentinel/runbooks/) |
+| Interview explainers | Plain-language concepts, implementation evidence, and answer scripts | [Guides](https://thunderxu7-sketch.github.io/fincloud-sentinel/guides/) |
+
+## Plain-language interview explainers
+
+| Capability | Standalone guide |
+|---|---|
+| Financial transactions: idempotency, state machine, double-entry, reconciliation, risk | [01 Financial transaction assurance](https://thunderxu7-sketch.github.io/fincloud-sentinel/guides/01-financial-transaction.html) |
+| Cloud architecture: containers, Kubernetes, Helm, Terraform, observability, DR | [02 Cloud architecture](https://thunderxu7-sketch.github.io/fincloud-sentinel/guides/02-cloud-architecture.html) |
+| AI delivery: RAG, redaction, guardrails, evaluation, human approval | [03 Governed AI delivery](https://thunderxu7-sketch.github.io/fincloud-sentinel/guides/03-ai-delivery.html) |
+| Presales: discovery, selection, POC, RFP, TCO/ROI, delivery planning | [04 Presales delivery](https://thunderxu7-sketch.github.io/fincloud-sentinel/guides/04-presales-delivery.html) |
+| Engineering: tests, CI, CodeQL, Trivy, public code, online demonstration | [05 Engineering evidence](https://thunderxu7-sketch.github.io/fincloud-sentinel/guides/05-engineering-evidence.html) |
+
+Every guide starts with a familiar analogy, distinguishes the current reference implementation
+from its production mapping, and ends with a 90-second answer, follow-up questions, and a practice
+checklist. The directory and all local links are validated by `npm run guides:check`.
 
 ## What is demonstrable
 
@@ -145,7 +161,7 @@ network, KMS, or disaster-recovery evidence. Never leave an interview environmen
 
 ```bash
 npm run check              # lint, API contract, TS checks, 20 tests, AI evals, docs, build
-npm run test:e2e           # 3 flows: control loop + bilingual mobile + dedicated route navigation
+npm run test:e2e           # 4 flows: control loop + bilingual mobile + routes + guide publication
 helm lint infra/helm/fincloud-sentinel
 helm template sentinel infra/helm/fincloud-sentinel >/tmp/fincloud.yaml
 ```
@@ -157,7 +173,7 @@ run without approval.
 ## Repository map
 
 ```text
-apps/web/                     bilingual Next.js home, control plane, architecture, and runbooks
+apps/web/                     bilingual Next.js surfaces + five standalone interview explainers
 packages/domain/              money, state machine, risk, ledger, reconciliation
 services/core-api/            Fastify API and Prometheus metrics
 services/ai-copilot/          FastAPI RAG/guardrail reference and evaluation set

@@ -1,0 +1,161 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="用通俗语言理解金融交易中的幂等、状态机、复式记账、对账和风险控制。" />
+  <title>金融交易保障 · FinCloud Sentinel 面试讲解</title>
+  <link rel="stylesheet" href="./guide.css" />
+  <script defer src="./guide.js"></script>
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="./index.html"><span class="brand-mark">F</span><span>FinCloud <strong>讲解手册</strong></span></a>
+    <nav aria-label="五个讲解主题">
+      <a data-guide-link href="./01-financial-transaction.html">01 金融交易</a>
+      <a data-guide-link href="./02-cloud-architecture.html">02 云架构</a>
+      <a data-guide-link href="./03-ai-delivery.html">03 AI落地</a>
+      <a data-guide-link href="./04-presales-delivery.html">04 售前能力</a>
+      <a data-guide-link href="./05-engineering-evidence.html">05 工程能力</a>
+    </nav>
+    <a class="home-link" href="../">返回项目首页</a>
+  </header>
+
+  <main class="page-shell">
+    <section class="hero">
+      <div class="hero-copy">
+        <span class="kicker">01 / FINANCIAL TRANSACTION ASSURANCE</span>
+        <h1>一笔钱，为什么不能只靠“接口成功”？</h1>
+        <p>金融系统真正关心的不是按钮有没有转圈，而是重复请求不会多扣钱、流程不会乱跳、账永远平、内外记录能核对，风险操作还能及时停下来。</p>
+        <div class="hero-meta"><span>建议阅读 12 分钟</span><span>面试讲解 90 秒</span><span>对应控制平台可实操</span></div>
+      </div>
+      <div class="hero-visual" aria-label="交易保障闭环示意图">
+        <div class="visual-title"><strong>一笔提现的保障闭环</strong><span>5 CONTROLS</span></div>
+        <div class="visual-flow">
+          <div class="visual-node"><b>01</b><div><strong>接收请求</strong><small>Idempotency key</small></div><em>唯一</em></div>
+          <div class="visual-node"><b>02</b><div><strong>风控决策</strong><small>Allow / Review / Block</small></div><em>先判断</em></div>
+          <div class="visual-node"><b>03</b><div><strong>状态流转</strong><small>Explicit state machine</small></div><em>不乱跳</em></div>
+          <div class="visual-node"><b>04</b><div><strong>复式记账</strong><small>Debit = Credit</small></div><em>账要平</em></div>
+          <div class="visual-node"><b>05</b><div><strong>自动对账</strong><small>Internal ↔ External</small></div><em>能发现</em></div>
+        </div>
+      </div>
+    </section>
+
+    <aside class="quick-answer">
+      <span>一句话先懂</span>
+      <strong>金融交易保障，就是让“一次业务意图只执行一次、只能按规则前进、每分钱有来有去、内外记录最终一致”。</strong>
+    </aside>
+
+    <section class="section reveal">
+      <div class="section-head"><span class="section-index">01 / 先用生活例子理解</span><h2>把提现想成机场托运行李。</h2><p>行李从柜台到飞机，不是“工作人员说办好了”就结束，而是每一步都有号码、状态、交接记录和最终核对。</p></div>
+      <div class="analogy">
+        <div class="analogy-story"><small>生活类比</small><h3>一张行李牌，贯穿整个旅程</h3><p>重复打印登机牌不会多托运一件行李；行李不能从“刚接收”直接跳到“已抵达”；每次交接都要留下记录；最后还要核对行李是否真的上了正确航班。</p></div>
+        <div class="analogy-map">
+          <div class="map-row"><span>行李牌编号</span><b>→</b><p>幂等键：同一个请求再次到达，仍返回原来的交易。</p></div>
+          <div class="map-row"><span>托运节点</span><b>→</b><p>状态机：接收、检查、装机、运输、到达必须按顺序。</p></div>
+          <div class="map-row"><span>交接清单</span><b>→</b><p>复式记账：每次转移都有来源和去向，双方数量相等。</p></div>
+          <div class="map-row"><span>落地盘点</span><b>→</b><p>对账：系统记录和航空公司的实际运输记录必须一致。</p></div>
+          <div class="map-row"><span>安检拦截</span><b>→</b><p>风险控制：异常行李先暂停，由授权人员复核。</p></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section reveal">
+      <div class="section-head"><span class="section-index">02 / 五个核心概念</span><h2>不是五个名词，而是五道连续防线。</h2><p>任何单点都不能独自保证资金安全；它们组合后才形成从请求到结算再到发现异常的闭环。</p></div>
+      <div class="concept-grid">
+        <article class="concept-card"><span>01</span><h3>幂等 Idempotency</h3><p>用户连续点两次、客户端超时重试、网关重复转发，都只能对应一笔业务交易。服务器保存“幂等键 → 原交易结果”的映射。</p><code>same key → same transaction<br />attempts +1, money movement +0</code></article>
+        <article class="concept-card"><span>02</span><h3>状态机 State Machine</h3><p>把允许的状态变化写成白名单。已完成交易不能再次结算，未审批交易不能直接广播，非法跳转立即报错。</p><code>RECEIVED → VALIDATING → RISK_REVIEW<br />→ APPROVED → BROADCASTING → COMPLETED</code></article>
+        <article class="concept-card"><span>03</span><h3>复式记账 Double-entry</h3><p>一笔提现同时改变客户负债与托管资产。每个资产、每笔交易的借方总额必须等于贷方总额，否则拒绝继续。</p><code>DEBIT customer liability 480 USDT<br />CREDIT custody asset 480 USDT</code></article>
+        <article class="concept-card"><span>04</span><h3>对账 Reconciliation</h3><p>内部显示完成不代表外部真的成功。定时把交易、账本和外部结算证明放在一起比对，发现缺失、金额不符或确认不足。</p><code>ledger amount ↔ settlement amount<br />expected confirmations ≥ 12</code></article>
+        <article class="concept-card"><span>05</span><h3>风险控制 Risk Control</h3><p>根据金额、频率、新地址、来源地和黑名单形成确定性信号，输出放行、人工审核或拦截，而不是把所有请求都交给模型猜。</p><code>ALLOW / REVIEW / BLOCK<br />reason codes + score + audit trail</code></article>
+        <article class="concept-card"><span>+</span><h3>为什么还需要审计事件？</h3><p>交易结果只能回答“现在是什么”，事件流才能回答“何时、由谁、为什么变成这样”，也是事故调查和合规取证的基础。</p><code>transaction + ledger + settlement<br />+ events + runbook = evidence</code></article>
+      </div>
+    </section>
+
+    <section class="section reveal">
+      <div class="section-head"><span class="section-index">03 / 一笔提现如何走完</span><h2>先控制，再移动；先记账，再核对。</h2><p>下面是一条可在 FinCloud Sentinel 控制平台中亲手操作的最小闭环。</p></div>
+      <div class="flow">
+        <article class="flow-step"><span>STEP 01</span><h3>接收与去重</h3><p>校验金额和账户，并查询幂等键；已有结果就直接返回，不创建第二笔交易。</p></article>
+        <article class="flow-step"><span>STEP 02</span><h3>计算风险</h3><p>规则输出分数、等级和原因；高风险进入人工审核，黑名单在资金移动前被拦截。</p></article>
+        <article class="flow-step"><span>STEP 03</span><h3>审批与广播</h3><p>只有 APPROVED 才能进入广播；每次状态变化增加版本号并写入事件。</p></article>
+        <article class="flow-step"><span>STEP 04</span><h3>确认与记账</h3><p>达到最终性门槛后标记完成，并生成借贷相等的两条结算分录。</p></article>
+        <article class="flow-step"><span>STEP 05</span><h3>对账与处置</h3><p>核对外部证明；发现不一致时保存证据，建议暂停最小范围通道并等待人工批准。</p></article>
+      </div>
+    </section>
+
+    <section class="section reveal">
+      <div class="section-head"><span class="section-index">04 / 普通系统与金融系统的差别</span><h2>“能跑”与“可信”之间，差的是可证明的控制。</h2></div>
+      <div class="compare-wrap"><table class="compare">
+        <thead><tr><th>问题</th><th>普通实现</th><th>受控实现</th><th>可验证证据</th></tr></thead>
+        <tbody>
+          <tr><td>客户端超时重试</td><td>再次调用接口，可能重复扣款</td><td>幂等键返回同一交易</td><td><span class="tag">REPLAY = 1</span></td></tr>
+          <tr><td>流程并发或乱序</td><td>靠 if/else 和开发约定</td><td>显式状态白名单 + 版本号</td><td>非法转换测试</td></tr>
+          <tr><td>余额发生变化</td><td>只更新一个 balance 字段</td><td>不可变借贷分录，借贷相等</td><td>Σ DEBIT = Σ CREDIT</td></tr>
+          <tr><td>外部网络异常</td><td>看接口返回码</td><td>交易、账本、外部证明三方核对</td><td>对账 run ID 和 issue code</td></tr>
+          <tr><td>发现高风险请求</td><td>模型直接拒绝或人工拍脑袋</td><td>确定性规则 + 原因码 + 审批门禁</td><td>score、reasons、audit event</td></tr>
+        </tbody>
+      </table></div>
+    </section>
+
+    <section class="project-proof reveal">
+      <span class="section-index">05 / FINCLOUD SENTINEL 中如何落地</span>
+      <h2>页面上的每个数字，都来自同一套领域规则。</h2>
+      <p>公开控制平台不是预录动画：提交、重放、审核、结算、故障注入和对账都会真实执行 TypeScript 领域函数。</p>
+      <div class="proof-grid">
+        <article class="proof-item"><span>DOMAIN</span><h3>整数资金模型</h3><p>金额转为原子单位处理，避免 JavaScript 浮点误差进入账本。</p></article>
+        <article class="proof-item"><span>STATE</span><h3>九状态白名单</h3><p>从 RECEIVED 到 COMPLETED / FAILED / REJECTED，非法跳转直接拒绝。</p></article>
+        <article class="proof-item"><span>LEDGER</span><h3>真实复式分录</h3><p>已完成交易生成两条借贷分录，并执行平衡不变量检查。</p></article>
+        <article class="proof-item"><span>RECON</span><h3>四类故障注入</h3><p>正常、记录缺失、金额不符、确认不足均可在浏览器中复现。</p></article>
+        <article class="proof-item"><span>RISK</span><h3>可解释确定性策略</h3><p>金额、频率、新地址、来源地和黑名单产生明确原因码。</p></article>
+        <article class="proof-item"><span>EVIDENCE</span><h3>证据包导出</h3><p>交易、分录、结算、对账、事件和调查结论可导出 JSON。</p></article>
+      </div>
+      <div class="proof-boundary"><strong>边界说明</strong><span>Pages 使用浏览器合成会话，不接触真实资金；Docker 环境提供 Fastify API。生产环境还需要真实账务系统、权限隔离、密钥托管、合规审批和外部清结算适配。</span></div>
+    </section>
+
+    <section class="section reveal">
+      <div class="section-head"><span class="section-index">06 / 面试可以直接这样讲</span><h2>90 秒口述版本。</h2></div>
+      <div class="script-box">
+        <blockquote id="interview-script">“我把金融交易安全拆成五层。第一层是<strong>幂等</strong>，确保重试不会产生第二笔资金移动；第二层是<strong>显式状态机</strong>，确保未审核交易不能跳到结算；第三层是<strong>复式记账</strong>，每笔完成交易都满足借贷相等；第四层是<strong>内外对账</strong>，检查账本和外部结算的缺失、金额与确认数；第五层是<strong>风险控制</strong>，用可解释规则决定放行、审核或拦截。我的项目把这五层做成可操作控制平台，能现场演示幂等重放、人工审批、结算、金额不一致故障、对账告警和人工批准风险隔离。”</blockquote>
+        <aside class="script-side"><span>表达结构</span><p>先讲目标，再讲五层控制，最后用一个可演示闭环收尾。不要一开始就堆数据库或云产品名称。</p><button class="copy-button" data-copy="#interview-script">复制口述稿</button></aside>
+      </div>
+    </section>
+
+    <section class="section reveal">
+      <div class="section-head"><span class="section-index">07 / 面试官继续追问</span><h2>四个高频问题。</h2></div>
+      <div class="question-grid">
+        <details><summary>幂等和数据库唯一索引是一回事吗？</summary><p>唯一索引是实现幂等的重要底线，但不是完整语义。完整幂等还要保存原请求摘要和原响应，判断同一个键是否被不同参数误用，并处理处理中、成功和失败等状态。</p></details>
+        <details><summary>状态机为什么比很多 if/else 更可靠？</summary><p>因为允许的转换是集中、可枚举、可测试的。任何新状态和新路径都必须显式加入规则，不会因为某个接口漏写一个判断就绕过审批。</p></details>
+        <details><summary>复式记账已经平了，为什么还要对账？</summary><p>账本平衡只能证明内部记录自洽，不能证明外部链上或清算网络真的按相同金额完成。对账负责发现“内部正确、外部缺失或不一致”。</p></details>
+        <details><summary>风险模型应该直接控制资金吗？</summary><p>低风险确定性策略可以自动放行，明显黑名单可以预先阻断；但高影响或不确定动作应进入审核。模型输出必须带原因、版本和证据，不能成为不可解释的资金开关。</p></details>
+      </div>
+    </section>
+
+    <section class="section reveal">
+      <div class="section-head"><span class="section-index">08 / 不要这样说</span><h2>三个常见表达误区。</h2></div>
+      <div class="pitfall-list">
+        <article class="pitfall"><span>!</span><div><h3>“接口返回 200 就成功了”</h3><p>HTTP 成功只说明请求被处理，不能替代最终性、记账与对账。</p></div></article>
+        <article class="pitfall"><span>!</span><div><h3>“用分布式锁就不会重复”</h3><p>锁会超时和失效，幂等业务号与持久结果才是最终防线。</p></div></article>
+        <article class="pitfall"><span>!</span><div><h3>“余额对得上就没问题”</h3><p>聚合余额会隐藏过程错误；不可变分录和逐笔对账才可追溯。</p></div></article>
+        <article class="pitfall"><span>!</span><div><h3>“AI 自动处理所有异常”</h3><p>AI适合归集证据和建议动作，资金类控制仍需策略门禁与人工批准。</p></div></article>
+      </div>
+    </section>
+
+    <section class="section reveal">
+      <div class="practice" data-practice>
+        <div class="practice-copy"><h3>学完后的自检</h3><p>不看页面，用自己的话完成右侧四项。进度只保存在当前浏览器。</p><div class="progress"><div class="progress-label"><span>掌握进度</span><span data-progress-text>0/4</span></div><div class="progress-track"><i data-progress></i></div></div></div>
+        <div class="checklist">
+          <label><input type="checkbox" /><b>✓</b><span>能用“重复点击提现”解释幂等。</span></label>
+          <label><input type="checkbox" /><b>✓</b><span>能画出一条合法状态流转，并说出一个非法跳转。</span></label>
+          <label><input type="checkbox" /><b>✓</b><span>能解释“账本平衡”和“外部对账”为什么都需要。</span></label>
+          <label><input type="checkbox" /><b>✓</b><span>能在控制平台演示审核、结算、故障注入和风险隔离。</span></label>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="page-footer">
+    <div class="pager"><a href="./index.html"><span>← 总目录</span><strong>五项能力讲解</strong></a><a href="./02-cloud-architecture.html"><span>下一篇 →</span><strong>云架构：从容器到灾备</strong></a></div>
+    <div class="footer-note"><span>FinCloud Sentinel · 面试讲解材料</span><span>合成数据参考实现，不是生产金融系统</span></div>
+  </footer>
+</body>
+</html>

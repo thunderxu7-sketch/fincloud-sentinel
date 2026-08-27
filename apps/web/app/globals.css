@@ -175,6 +175,17 @@ a { color: inherit; text-decoration: none; }
 .surface-card p { margin: 0; color: var(--muted); font-size: 12px; line-height: 1.75; }
 .surface-card > strong { display: flex; align-items: center; gap: 7px; margin-top: auto; padding-top: 25px; color: var(--teal); font-size: 11px; }
 .home-evidence { padding-top: 56px; }
+.interview-guides { max-width: none; padding-right: max(28px, calc((100vw - 1440px) / 2)); padding-left: max(28px, calc((100vw - 1440px) / 2)); background: #edf1ec; }
+.interview-guides .section-heading { max-width: 1440px; margin-right: auto; margin-left: auto; }
+.interview-guides .section-heading.compact { max-width: 1440px; }
+.guide-link-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; max-width: 1440px; margin: 0 auto; }
+.guide-link-card { display: flex; min-height: 275px; flex-direction: column; padding: 22px; border: 1px solid var(--line); border-radius: 16px; background: white; transition: border-color 180ms ease, box-shadow 180ms ease, transform 180ms ease; }
+.guide-link-card:hover { border-color: #b9c9bc; box-shadow: 0 18px 48px rgba(7, 21, 16, .08); transform: translateY(-4px); }
+.guide-link-card > div { display: flex; align-items: center; justify-content: space-between; color: var(--teal); }
+.guide-link-card > div span { display: grid; width: 34px; height: 34px; place-items: center; border-radius: 9px; color: var(--forest); background: var(--lime); font-family: var(--font-mono), monospace; font-size: 9px; font-weight: 900; }
+.guide-link-card h3 { margin: 35px 0 9px; font-size: 21px; letter-spacing: -.035em; }
+.guide-link-card p { margin: 0; color: var(--muted); font-size: 11px; line-height: 1.7; }
+.guide-link-card strong { display: flex; align-items: center; gap: 6px; margin-top: auto; padding-top: 22px; color: var(--teal); font-size: 10px; }
 .home-pack { display: grid; grid-template-columns: .85fr 1.15fr; gap: 72px; padding: 96px max(5vw, calc((100vw - 1360px) / 2)); color: white; background: var(--forest); }
 .home-pack h2 { margin: 13px 0 14px; font-size: clamp(36px, 4vw, 56px); line-height: 1.08; letter-spacing: -.052em; }
 .home-pack > div:first-child > p { max-width: 660px; margin: 0; color: #b7c9bf; line-height: 1.75; }
@@ -560,6 +571,8 @@ footer > a { display: flex; align-items: center; gap: 7px; }
   .platform-metrics { margin-right: 24px; margin-left: 24px; }
   .surface-grid { grid-template-columns: repeat(2, 1fr); }
   .surface-card:last-child { grid-column: 1 / -1; }
+  .guide-link-grid { grid-template-columns: repeat(3, 1fr); }
+  .guide-link-card:nth-child(n+4) { min-height: 235px; }
   .home-pack { grid-template-columns: 1fr; }
   .page-hero, .console-hero { grid-template-columns: 1fr; }
   .page-hero { gap: 42px; }
@@ -615,6 +628,9 @@ footer > a { display: flex; align-items: center; gap: 7px; }
   .architecture-grid, .evidence-grid, .document-grid { grid-template-columns: 1fr; }
   .surface-grid { grid-template-columns: 1fr; }
   .surface-card, .surface-card:last-child { grid-column: auto; min-height: 290px; }
+  .interview-guides { padding-right: 18px; padding-left: 18px; }
+  .guide-link-grid { grid-template-columns: 1fr; }
+  .guide-link-card, .guide-link-card:nth-child(n+4) { min-height: 230px; }
   .home-pack { grid-template-columns: 1fr; gap: 42px; padding: 74px 20px; }
   .pack-grid { grid-template-columns: 1fr; }
   .poc-section { gap: 42px; padding: 78px 20px; }
