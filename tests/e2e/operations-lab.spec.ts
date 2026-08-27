@@ -3,6 +3,7 @@ import { expect, test } from "@playwright/test";
 test.beforeEach(async ({ page }) => {
   await page.addInitScript(() => window.localStorage.clear());
   await page.goto("/");
+  await expect(page.getByTestId("operations-lab")).toHaveAttribute("data-hydrated", "true");
 });
 
 test("executes review, settlement, idempotency, reconciliation, and containment", async ({ page }) => {

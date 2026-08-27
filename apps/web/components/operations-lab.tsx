@@ -423,7 +423,7 @@ export function OperationsLab({ locale }: { locale: Locale }) {
   };
 
   return (
-    <section className="section operations-section" id="scenario" data-testid="operations-lab">
+    <section className="section operations-section" id="scenario" data-testid="operations-lab" data-hydrated={hydrated}>
       <div className="section-heading operations-heading">
         <div>
           <span className="section-index">{t.index}</span>
