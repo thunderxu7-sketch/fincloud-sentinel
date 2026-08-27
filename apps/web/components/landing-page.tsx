@@ -47,14 +47,15 @@ const copy = {
       ["Solution practice", "Discovery, NFRs, POC scorecards, RFP response, TCO model, and executive proposal."],
     ],
     guidesIndex: "03 / INTERVIEW EXPLAINERS",
-    guidesTitle: "Five capabilities, explained without the jargon.",
-    guidesSub: "Each standalone guide starts with a familiar analogy, then connects the concept to implementation evidence, follow-up questions, and a 90-second interview answer.",
+    guidesTitle: "Five capabilities—and six questions that decide production readiness.",
+    guidesSub: "Five standalone capability guides plus one decision-level Q&A connect familiar analogies to implementation evidence, trade-offs, and reusable interview answers.",
     guideItems: [
       ["01", "Financial transactions", "Idempotency, state machines, double-entry accounting, reconciliation, and risk control.", "guides/01-financial-transaction.html"],
       ["02", "Cloud architecture", "Containers, Kubernetes, Helm, Terraform, observability, and disaster recovery.", "guides/02-cloud-architecture.html"],
       ["03", "AI delivery", "RAG, redaction, guardrails, evaluation, and explicit human approval.", "guides/03-ai-delivery.html"],
       ["04", "Presales delivery", "Discovery, solution selection, POC, RFP, TCO/ROI, and delivery planning.", "guides/04-presales-delivery.html"],
       ["05", "Engineering evidence", "Tests, CI, CodeQL, Trivy, public code, and an online demonstration.", "guides/05-engineering-evidence.html"],
+      ["06", "Six key questions", "Funds safety, ledger design, RTO/RPO, AI governance, Alibaba Cloud selection, and POC value.", "guides/06-key-interview-questions.html"],
     ],
     openGuide: "Read explainer",
     openAllGuides: "Open the complete guide",
@@ -90,14 +91,15 @@ const copy = {
       ["售前实践", "需求访谈、NFR、POC计分卡、RFP应答、TCO模型与高层方案。"],
     ],
     guidesIndex: "03 / 面试通俗讲解",
-    guidesTitle: "五项能力，不堆名词也能讲清楚。",
-    guidesSub: "每篇独立 HTML 都从生活类比出发，再连到实现证据、高频追问与 90 秒面试口述稿。",
+    guidesTitle: "五项能力，加上六个决定能否上生产的问题。",
+    guidesSub: "五篇能力讲解加一篇决策级问答，将生活类比连到实现证据、架构取舍和可复制面试口述稿。",
     guideItems: [
       ["01", "金融交易", "幂等、状态机、复式记账、对账与风险控制。", "guides/01-financial-transaction.html"],
       ["02", "云架构", "容器、Kubernetes、Helm、Terraform、监控与灾备。", "guides/02-cloud-architecture.html"],
       ["03", "AI 落地", "RAG、数据脱敏、Guardrails、评测与人工确认。", "guides/03-ai-delivery.html"],
       ["04", "售前能力", "需求调研、方案选型、POC、RFP、TCO/ROI 与交付规划。", "guides/04-presales-delivery.html"],
       ["05", "工程能力", "测试、CI、CodeQL、Trivy、公开代码与在线演示。", "guides/05-engineering-evidence.html"],
+      ["06", "六个重点问题", "资金安全、账务、RTO/RPO、AI 治理、阿里云选型与 POC 价值。", "guides/06-key-interview-questions.html"],
     ],
     openGuide: "阅读讲解",
     openAllGuides: "打开完整手册",
@@ -111,7 +113,7 @@ const copy = {
 
 const surfaceIcons: LucideIcon[] = [CircleDollarSign, CloudCog, FileCheck2];
 const evidenceIcons: LucideIcon[] = [Database, SearchCheck, Gauge, CheckCircle2];
-const guideIcons: LucideIcon[] = [CircleDollarSign, CloudCog, Bot, FileCheck2, SearchCheck];
+const guideIcons: LucideIcon[] = [CircleDollarSign, CloudCog, Bot, FileCheck2, SearchCheck, ShieldAlert];
 
 export function LandingPage() {
   const { locale } = useLocale();

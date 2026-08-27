@@ -8,6 +8,7 @@ const topicPages = [
   "03-ai-delivery.html",
   "04-presales-delivery.html",
   "05-engineering-evidence.html",
+  "06-key-interview-questions.html",
 ];
 const pages = ["index.html", ...topicPages];
 const errors = [];
@@ -52,7 +53,15 @@ for (const file of pages) {
   }
 
   if (file !== "index.html") {
-    check(/id="interview-script"/.test(html), `${file}: missing interview script`);
+    if (file === "06-key-interview-questions.html") {
+      const scripts = [...html.matchAll(/id="script-q([1-6])"/g)].map((match) => match[1]);
+      check(new Set(scripts).size === 6, `${file}: expected six question-specific interview scripts`);
+      for (let question = 1; question <= 6; question += 1) {
+        check(html.includes(`id="q${question}"`), `${file}: missing question anchor q${question}`);
+      }
+    } else {
+      check(/id="interview-script"/.test(html), `${file}: missing interview script`);
+    }
     check(/data-practice/.test(html), `${file}: missing practice checklist`);
     for (const topic of topicPages) {
       check(html.includes(`href="./${topic}"`), `${file}: topic navigation is missing ${topic}`);

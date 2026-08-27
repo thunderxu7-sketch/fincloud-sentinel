@@ -1,8 +1,13 @@
 (() => {
   const file = location.pathname.split('/').pop() || 'index.html';
+  let activeLink;
   document.querySelectorAll('[data-guide-link]').forEach((link) => {
-    if (link.getAttribute('href') === `./${file}`) link.classList.add('active');
+    if (link.getAttribute('href') === `./${file}`) {
+      link.classList.add('active');
+      activeLink = link;
+    }
   });
+  requestAnimationFrame(() => activeLink?.scrollIntoView({ block: 'nearest', inline: 'center' }));
 
   const observer = 'IntersectionObserver' in window
     ? new IntersectionObserver((entries) => {

@@ -9,7 +9,7 @@
 [![Synthetic data](https://img.shields.io/badge/data-synthetic%20only-c9f31d)](#responsible-use)
 
 **[Live bilingual demo / 中英文演示](https://thunderxu7-sketch.github.io/fincloud-sentinel/)** ·
-[Five interview explainers / 五项面试讲解](https://thunderxu7-sketch.github.io/fincloud-sentinel/guides/) ·
+[Interview explainers / 面试通俗讲解](https://thunderxu7-sketch.github.io/fincloud-sentinel/guides/) ·
 [Presales evidence pack / 售前材料](docs/presales/README.md) ·
 [Architecture](docs/architecture/high-level-design.md) ·
 [OpenAPI](docs/api/openapi.yaml)
@@ -44,10 +44,11 @@ FinCloud Sentinel 是面向金融科技解决方案架构师 / FDE 的可运行�
 | AI delivery: RAG, redaction, guardrails, evaluation, human approval | [03 Governed AI delivery](https://thunderxu7-sketch.github.io/fincloud-sentinel/guides/03-ai-delivery.html) |
 | Presales: discovery, selection, POC, RFP, TCO/ROI, delivery planning | [04 Presales delivery](https://thunderxu7-sketch.github.io/fincloud-sentinel/guides/04-presales-delivery.html) |
 | Engineering: tests, CI, CodeQL, Trivy, public code, online demonstration | [05 Engineering evidence](https://thunderxu7-sketch.github.io/fincloud-sentinel/guides/05-engineering-evidence.html) |
+| Decision-level Q&A: funds safety, ledger, RTO/RPO, AI governance, cloud selection, POC value | [06 Six key interview questions](https://thunderxu7-sketch.github.io/fincloud-sentinel/guides/06-key-interview-questions.html) |
 
 Every guide starts with a familiar analogy, distinguishes the current reference implementation
-from its production mapping, and ends with a 90-second answer, follow-up questions, and a practice
-checklist. The directory and all local links are validated by `npm run guides:check`.
+from its production mapping, and includes reusable answer scripts, evidence, follow-up reasoning,
+and a practice checklist. The directory and all local links are validated by `npm run guides:check`.
 
 ## What is demonstrable
 
@@ -173,7 +174,7 @@ run without approval.
 ## Repository map
 
 ```text
-apps/web/                     bilingual Next.js surfaces + five standalone interview explainers
+apps/web/                     bilingual Next.js surfaces + six standalone interview explainers
 packages/domain/              money, state machine, risk, ledger, reconciliation
 services/core-api/            Fastify API and Prometheus metrics
 services/ai-copilot/          FastAPI RAG/guardrail reference and evaluation set

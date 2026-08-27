@@ -1,0 +1,240 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="通俗讲解金融科技方案面试中的幂等与资金安全、账务对账、RTO/RPO、AI 治理、阿里云选型与 POC 商业价值。" />
+  <title>六个重点面试问题 · FinCloud Sentinel</title>
+  <link rel="stylesheet" href="./guide.css" />
+  <script defer src="./guide.js"></script>
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="./index.html"><span class="brand-mark">F</span><span>FinCloud <strong>讲解手册</strong></span></a>
+    <nav aria-label="六个讲解主题">
+      <a data-guide-link href="./01-financial-transaction.html">01 金融交易</a>
+      <a data-guide-link href="./02-cloud-architecture.html">02 云架构</a>
+      <a data-guide-link href="./03-ai-delivery.html">03 AI落地</a>
+      <a data-guide-link href="./04-presales-delivery.html">04 售前能力</a>
+      <a data-guide-link href="./05-engineering-evidence.html">05 工程能力</a>
+      <a data-guide-link href="./06-key-interview-questions.html">06 重点问答</a>
+    </nav>
+    <a class="home-link" href="../">返回项目首页</a>
+  </header>
+
+  <main class="page-shell">
+    <section class="hero">
+      <div class="hero-copy">
+        <span class="kicker">06 / SIX DECISION-LEVEL QUESTIONS</span>
+        <h1>六个问题，讲清“为什么值得上生产”。</h1>
+        <p>面试官真正想听的不是产品名称，而是你能否从业务风险出发，设计可证明的控制，明确取舍和责任边界，最后用 POC 和经济性让客户做出决定。</p>
+        <div class="hero-meta"><span>六个一句话答案</span><span>设计步骤 + 取舍</span><span>项目真实证据</span><span>六段可复制口述稿</span></div>
+      </div>
+      <div class="hero-visual" aria-label="六个面试重点问题">
+        <div class="visual-title"><strong>从资金正确到商业决策</strong><span>6 QUESTIONS</span></div>
+        <div class="visual-flow">
+          <div class="visual-node"><b>Q1</b><div><strong>幂等与资金安全</strong><small>One intent, one effect</small></div><em>不多扣</em></div>
+          <div class="visual-node"><b>Q2</b><div><strong>账务与对账</strong><small>Balanced and reconciled</small></div><em>账要平</em></div>
+          <div class="visual-node"><b>Q3</b><div><strong>RTO / RPO</strong><small>Business-led recovery</small></div><em>能恢复</em></div>
+          <div class="visual-node"><b>Q4</b><div><strong>AI 与数据治理</strong><small>Grounded and governed</small></div><em>不越权</em></div>
+          <div class="visual-node"><b>Q5</b><div><strong>阿里云产品选型</strong><small>Workload before logo</small></div><em>有理由</em></div>
+          <div class="visual-node"><b>Q6</b><div><strong>POC 与商业价值</strong><small>Evidence before rollout</small></div><em>能决策</em></div>
+        </div>
+      </div>
+    </section>
+
+    <aside class="quick-answer">
+      <span>统一答题结构</span>
+      <strong>先给结论，再讲设计和取舍，最后用测试、指标、演练或成本数据证明；不把云产品名称当成答案。</strong>
+    </aside>
+
+    <section class="section reveal">
+      <div class="section-head"><span class="section-index">00 / 快速导航</span><h2>点击直达面试官正在问的那一题。</h2><p>每题都按“一句话结论 → 通俗类比 → 设计步骤 → 项目证据 → 可复制口述稿”组织。</p></div>
+      <div class="question-jump-grid">
+        <a class="question-jump" href="#q1"><span>Q1</span><strong>如何保证幂等与资金安全？</strong><b>↓</b></a>
+        <a class="question-jump" href="#q2"><span>Q2</span><strong>如何设计账务和对账？</strong><b>↓</b></a>
+        <a class="question-jump" href="#q3"><span>Q3</span><strong>RTO / RPO 如何确定？</strong><b>↓</b></a>
+        <a class="question-jump" href="#q4"><span>Q4</span><strong>AI 幻觉和敏感数据如何治理？</strong><b>↓</b></a>
+        <a class="question-jump" href="#q5"><span>Q5</span><strong>为什么选择这些阿里云产品？</strong><b>↓</b></a>
+        <a class="question-jump" href="#q6"><span>Q6</span><strong>如何设计 POC 并证明商业价值？</strong><b>↓</b></a>
+      </div>
+    </section>
+
+    <section class="section reveal focus-section" id="q1">
+      <div class="section-head"><span class="section-index">Q1 / IDEMPOTENCY &amp; FUNDS SAFETY</span><h2>如何保证幂等与资金安全？</h2><p>不要只回答“加分布式锁”；锁会过期，网络会超时，进程会重启，资金正确需要多层共同保证。</p></div>
+      <div class="focus-answer"><span>一句话结论</span><div><strong>给每个业务意图一个不可变编号，用持久化唯一约束保证只落一次账，再用状态机、原子事务、复式记账、消息去重和对账形成纵深防御。</strong><small>幂等解决“重复请求”，资金安全还要解决非法状态、部分成功、消息重放和外部结算不确定。</small></div></div>
+      <div class="analogy">
+        <div class="analogy-story"><small>通俗类比</small><h3>网络超时，就像 ATM 吞卡后没打出回执。</h3><p>用户不知道钱是否已扣，再点一次不能变成第二次扣款。系统必须用原业务号查回原结果，而不是猜上次有没有成功。</p></div>
+        <div class="analogy-map">
+          <div class="map-row"><span>业务意图</span><b>→</b><p>客户端生成幂等键；服务端同时保存请求摘要，防止同键异参。</p></div>
+          <div class="map-row"><span>持久化底线</span><b>→</b><p>数据库唯一约束是权威；缓存只能提速，不能单独承担资金正确性。</p></div>
+          <div class="map-row"><span>一次事务</span><b>→</b><p>业务状态、借贷分录和 outbox 事件在同一本地事务提交。</p></div>
+          <div class="map-row"><span>异步重放</span><b>→</b><p>消费者按 event ID 去重，即使消息至少投递多次，也只产生一次业务效果。</p></div>
+          <div class="map-row"><span>事后发现</span><b>→</b><p>对账验证交易、账本与外部结算，为前面所有控制提供最后保险。</p></div>
+        </div>
+      </div>
+      <div class="explain-grid">
+        <article class="explain-card"><span>01 / IDENTITY</span><h3>唯一业务号 + 请求指纹</h3><p>同一键同一参数返回原交易；同一键不同参数直接拒绝。</p><code>same key + same payload → same result</code></article>
+        <article class="explain-card"><span>02 / CONCURRENCY</span><h3>状态机 + 版本号</h3><p>只允许白名单转换，用乐观并发控制防止两个操作员同时结算。</p><code>UPDATE ... WHERE version = expected</code></article>
+        <article class="explain-card"><span>03 / ATOMICITY</span><h3>状态、分录、事件一起提交</h3><p>避免“账已记、消息没发”或“消息已发、账没记”。</p><code>transaction + ledger + outbox</code></article>
+        <article class="explain-card"><span>04 / ACCOUNTING</span><h3>整数金额 + 复式记账</h3><p>按最小原子单位记录，避免浮点误差；每笔分录必须借贷相等。</p><code>BigInt atomic units · debit = credit</code></article>
+        <article class="explain-card"><span>05 / CONTAINMENT</span><h3>风险先判断，资金后移动</h3><p>黑名单、频率、新地址与大额交易决定放行、审核或阻断。</p><code>ALLOW / REVIEW / BLOCK</code></article>
+        <article class="explain-card"><span>06 / RECOVERY</span><h3>未知结果不等于失败</h3><p>对外部广播超时的交易先查询、再补偿，不能盲目重发资金指令。</p><code>unknown → query → reconcile → decide</code></article>
+      </div>
+      <div class="evidence-line"><strong>项目证据</strong><span>控制平台可现场演示：同一幂等键重放后 attempt +1，但交易和账本不新增；未审批交易不能结算；完成交易生成借贷相等分录。生产映射还包括持久唯一约束、outbox/inbox 和双人审批。</span></div>
+      <div class="focus-script"><div class="script-box"><blockquote id="script-q1">“我不会把幂等等同于分布式锁。我会给每个业务意图分配不可变的幂等键，在权威数据库建立唯一约束并保存请求指纹与原结果。业务状态、复式分录和 outbox 事件在同一事务提交，消费者再按 event ID 去重。状态机防止绕过审批，对账则提供最后发现机制。这样即使客户端重试、服务重启或消息重投，同一业务意图仍只产生一次资金效果。”</blockquote><aside class="script-side"><span>答题关键</span><p>先区分“去重”和“资金安全”，再讲纵深防御。</p><button class="copy-button" data-copy="#script-q1">复制 Q1 口述稿</button></aside></div></div>
+    </section>
+
+    <section class="section reveal focus-section" id="q2">
+      <div class="section-head"><span class="section-index">Q2 / LEDGER &amp; RECONCILIATION</span><h2>如何设计账务和对账？</h2><p>账本平衡只能证明“内部自洽”，不能证明银行、链上或清算网络真的按同一金额完成。</p></div>
+      <div class="focus-answer"><span>一句话结论</span><div><strong>用不可变的复式分录记录“钱从哪里来、到哪里去”，再分层核对业务、账本和外部结算，异常只能通过补偿分录修正，不直接改历史。</strong><small>“双重记账”在会计中更准确的说法是“复式记账 / double-entry accounting”。</small></div></div>
+      <div class="explain-grid">
+        <article class="explain-card"><span>01 / ACCOUNT MODEL</span><h3>先定义账户和余额方向</h3><p>区分资产、负债、收益与费用；客户余额对平台通常是负债，托管资金是资产。</p><code>LIABILITY:CUSTOMER · ASSET:CUSTODY</code></article>
+        <article class="explain-card"><span>02 / JOURNAL</span><h3>一笔业务对应一组分录</h3><p>分录带业务号、资产、方向、原子金额、时间和版本，同组借贷必须相等。</p><code>Σ debit(asset, tx) = Σ credit(asset, tx)</code></article>
+        <article class="explain-card"><span>03 / IMMUTABILITY</span><h3>错账用补偿，不删改历史</h3><p>反向分录保留原始证据和修正理由，任何时点都能重放得到当时余额。</p><code>append-only + compensating entry</code></article>
+        <article class="explain-card"><span>04 / LAYER 1</span><h3>业务 ↔ 账本</h3><p>所有已完成交易必须有且只有一组平衡分录；非终态不应过早记最终账。</p><code>completed transaction ↔ one posting</code></article>
+        <article class="explain-card"><span>05 / LAYER 2</span><h3>账本 ↔ 外部结算</h3><p>逐笔比对业务号、资产、金额、状态与最终性，分类记录缺失、金额不符和确认不足。</p><code>ledger ↔ bank / chain / clearing</code></article>
+        <article class="explain-card"><span>06 / OPERATIONS</span><h3>差异不是一个数字，而是事件</h3><p>保存 run ID、差异码、期望值、实际值和证据；按影响范围暂停最小通道并升级。</p><code>detect → classify → contain → repair</code></article>
+      </div>
+      <div class="compare-wrap" style="margin-top:12px"><table class="compare">
+        <thead><tr><th>检查层</th><th>要回答的问题</th><th>常见异常</th><th>处置原则</th></tr></thead>
+        <tbody>
+          <tr><td>分录内部</td><td>每组分录是否借贷平衡？</td><td>UNBALANCED_LEDGER</td><td>拒绝过账，不进入后续结算</td></tr>
+          <tr><td>业务与账本</td><td>完成交易是否且仅记一次？</td><td>MISSING / DUPLICATE POSTING</td><td>冻结差异，查找业务事件链</td></tr>
+          <tr><td>账本与外部</td><td>外部是否真的按同金额完成？</td><td>MISSING_SETTLEMENT / AMOUNT_MISMATCH</td><td>先保存证据，再补偿或重试</td></tr>
+          <tr><td>汇总与证明</td><td>总账、明细和对方日终文件是否一致？</td><td>AGGREGATE / CUT-OFF MISMATCH</td><td>检查时区、截止点和在途项</td></tr>
+        </tbody>
+      </table></div>
+      <div class="evidence-line"><strong>项目证据</strong><span>FinCloud Sentinel 用原子单位和不可变分录实现借贷平衡，对账引擎能识别账本不平、外部记录缺失、金额不符和确认数不足。控制平台可注入金额不一致并导出完整证据包。</span></div>
+      <div class="focus-script"><div class="script-box"><blockquote id="script-q2">“我会把账务设计成不可变的复式日记账。每笔业务用最小原子单位记录一组借贷相等的分录，并关联不可变业务号；错账用反向补偿，不修改历史。对账分三层：先检查分录自身平衡，再检查完成交易与过账一一对应，最后核对账本和链上或清算网络的金额与最终性。差异会带 run ID、原因码和证据进入处置流程。”</blockquote><aside class="script-side"><span>答题关键</span><p>一定讲清“内部平衡≠外部一致”。</p><button class="copy-button" data-copy="#script-q2">复制 Q2 口述稿</button></aside></div></div>
+    </section>
+
+    <section class="section reveal focus-section" id="q3">
+      <div class="section-head"><span class="section-index">Q3 / RECOVERY OBJECTIVES</span><h2>RTO / RPO 如何确定？</h2><p>RTO 是 Recovery Time Objective（恢复时间目标），RPO 是 Recovery Point Objective（恢复点目标）。它们是业务容忍度，不是备份产品的默认参数。</p></div>
+      <div class="focus-answer"><span>一句话结论</span><div><strong>先用 BIA 计算“停多久会造成什么损失”和“最多能重做多少数据”，再按业务能力分级设定 RTO/RPO，最后用恢复演练证明，而不是购买高可用就宣称达标。</strong><small>RTO 越短、RPO 越小，通常成本与操作复杂度越高；不应给所有系统一个统一数字。</small></div></div>
+      <div class="flow">
+        <article class="flow-step"><span>STEP 01</span><h3>做业务影响分析</h3><p>量化每分钟损失、资金暴露、客诉、监管与声誉影响。</p></article>
+        <article class="flow-step"><span>STEP 02</span><h3>按能力分级</h3><p>交易接收、账本、风控、查询、报表和内部后台可以有不同目标。</p></article>
+        <article class="flow-step"><span>STEP 03</span><h3>匹配数据语义</h3><p>确定复制、备份、事件重放、跨域切换和密钥可用方案。</p></article>
+        <article class="flow-step"><span>STEP 04</span><h3>计算成本与风险</h3><p>对比冷备、温备和双活的资源、数据冲突与操作风险。</p></article>
+        <article class="flow-step"><span>STEP 05</span><h3>演练并签字</h3><p>在隔离环境恢复，测量真实时间与数据位点，对账后才重开。</p></article>
+      </div>
+      <div class="compare-wrap" style="margin-top:12px"><table class="compare">
+        <thead><tr><th>对象</th><th>FinCloud POC 提议值</th><th>为什么</th><th>怎么证明</th></tr></thead>
+        <tbody>
+          <tr><td>无状态服务可用区故障</td><td><span class="tag">RTO ≤5 min</span></td><td>应用副本可重建，不应等待数据恢复</td><td>删除副本/隔离可用区，观察 SLI</td></tr>
+          <tr><td>区域级灾备</td><td><span class="tag">RPO ≤5 min / RTO ≤60 min</span></td><td>这是项目建议起点，不是客户承诺</td><td>备份恢复、事件重放、计时与数据位点</td></tr>
+          <tr><td>重开资金通道</td><td><span class="tag">100% 对账后开放</span></td><td>技术服务恢复不等于资金状态已确认</td><td>账本不变量、外部对账和业务/风险签字</td></tr>
+        </tbody>
+      </table></div>
+      <div class="evidence-line"><strong>项目证据</strong><span>项目 NFR 将“可用区故障 RTO ≤5 分钟”与“区域 RPO/RTO 建议 ≤5/≤60 分钟”明确标记为 POC 默认值，需客户确认。Runbook 要求恢复后验证账本不变量、运行对账并由业务/风险/运维批准重开。</span></div>
+      <div class="focus-script"><div class="script-box"><blockquote id="script-q3">“RTO 和 RPO 不是先由架构师拍一个数字，而是从 BIA 倒推。我会先量化中断时间和数据丢失对资金、合规、客户与声誉的影响，再按交易、账务、查询和报表分级，为每个能力设定不同目标。然后在冷备、温备或更高等级方案中平衡成本和操作风险。最终目标必须通过隔离恢复和故障演练实测，资金通道只有在不变量和对账全部通过后才重开。”</blockquote><aside class="script-side"><span>答题关键</span><p>数字要标注“建议值”，不能假装是客户事实或 SLA。</p><button class="copy-button" data-copy="#script-q3">复制 Q3 口述稿</button></aside></div></div>
+    </section>
+
+    <section class="section reveal focus-section" id="q4">
+      <div class="section-head"><span class="section-index">Q4 / AI SAFETY &amp; DATA GOVERNANCE</span><h2>AI 幻觉和敏感数据如何治理？</h2><p>幻觉不能靠“提示词写得更严格”彻底消除；敏感数据也不能等模型返回后再想起打码。</p></div>
+      <div class="focus-answer"><span>一句话结论</span><div><strong>将 AI 限定为“有证据的建议者”：输入前最小化和脱敏，回答时只基于允许的知识并强制引用，工具调用受白名单限制，高影响动作必须人工确认，上线前与上线后持续评测。</strong><small>目标不是“模型永远正确”，而是“错误可发现、不越权、不泄密、可回滚”。</small></div></div>
+      <div class="explain-grid">
+        <article class="explain-card"><span>01 / MINIMIZE</span><h3>先判断是否真需要给模型</h3><p>按数据分类只提供完成任务所需最小字段；账本明细、密钥和完整身份信息默认禁止。</p><code>need-to-know · purpose limitation</code></article>
+        <article class="explain-card"><span>02 / REDACT</span><h3>在进模型前脱敏</h3><p>对 token、密码、云密钥、账号和个人标识做检测、掩码或令牌化；日志收集侧尽早脱敏。</p><code>raw secret → [REDACTED:type]</code></article>
+        <article class="explain-card"><span>03 / GROUND</span><h3>RAG 只检索允许的版本化知识</h3><p>返回来源、版本、片段和匹配分数；没有足够证据时拒绝下结论或转人工。</p><code>answer = claim + citation + evidence</code></article>
+        <article class="explain-card"><span>04 / GUARD</span><h3>防提示注入和越权工具</h3><p>将外部文本当数据而非指令；工具按读/写分级，参数校验、权限和速率限制在模型之外执行。</p><code>untrusted context ≠ system instruction</code></article>
+        <article class="explain-card"><span>05 / APPROVE</span><h3>建议与执行分离</h3><p>查指标、查日志可读取；暂停通道、冻结账户或资金动作需显式人工审批和审计记录。</p><code>propose → approve → execute → audit</code></article>
+        <article class="explain-card"><span>06 / EVALUATE</span><h3>测评正确性，也测安全失败</h3><p>固定数据集覆盖来源命中、引用、拒答、注入、泄密、工具越权与降级策略。</p><code>offline eval + canary + runtime monitor</code></article>
+      </div>
+      <div class="compare-wrap" style="margin-top:12px"><table class="compare">
+        <thead><tr><th>风险</th><th>预防</th><th>检测</th><th>失败后怎么做</th></tr></thead>
+        <tbody>
+          <tr><td>幻觉</td><td>允许源 RAG、引用约束、结构化输出</td><td>期望来源/事实评测、无证据率</td><td>拒答、确定性规则降级或转人工</td></tr>
+          <tr><td>敏感数据</td><td>分类、最小化、脱敏、私网访问、禁止训练复用</td><td>DLP 规则、输入/输出扫描、审计抽样</td><td>阻断输出、吊销凭据、缩短保留并启动事件流程</td></tr>
+          <tr><td>工具越权</td><td>白名单、最小权限、参数校验、审批门禁</td><td>工具调用记录、异常频率和高风险动作告警</td><td>不执行，保留建议和审批证据</td></tr>
+        </tbody>
+      </table></div>
+      <div class="evidence-line"><strong>项目证据</strong><span>当前 AI Copilot 是确定性、离线参考实现：从版本化 Runbook 检索来源与摘要，检测提示注入，脱敏 token/密码/云密钥，只允许读工具，资金或变更动作一律标记 approval_required。它不是已上生产的大模型系统，这个边界在页面和文档中明示。</span></div>
+      <div class="focus-script"><div class="script-box"><blockquote id="script-q4">“我不把幻觉治理寄托在一句提示词上。首先对数据分类和最小化，在进模型前脱敏，密钥、完整账本和个人数据默认不进入。回答只从允许的版本化知识中检索，强制带来源，证据不足就拒答或转人工。外部内容按不可信数据处理，工具有白名单和最小权限，任何资金或生产变更都需人工审批。最后用固定评测集、灰度和运行指标持续监控。”</blockquote><aside class="script-side"><span>答题关键</span><p>说“可控失败”，不要说“彻底消除幻觉”。</p><button class="copy-button" data-copy="#script-q4">复制 Q4 口述稿</button></aside></div></div>
+    </section>
+
+    <section class="section reveal focus-section" id="q5">
+      <div class="section-head"><span class="section-index">Q5 / ALIBABA CLOUD SELECTION</span><h2>为什么选择这些阿里云产品？</h2><p>正确回答不是“因为它们都是阿里云的”，而是每个产品都对应一个已确认的工作负载、NFR 和运维责任。</p></div>
+      <div class="focus-answer"><span>一句话结论</span><div><strong>我从交易一致性、峰值负载、数据时效、RTO/RPO、合规边界和团队运维能力倒推产品，并为每个托管服务保留标准接口、替代方案和退出路径。</strong><small>选型前必须在客户目标账号确认区域可用性、版本、配额、SLA、合规资格和当日价格。</small></div></div>
+      <div class="compare-wrap"><table class="compare">
+        <thead><tr><th>需求 / 风险</th><th>参考产品</th><th>选择理由</th><th>不能替代的应用责任</th></tr></thead>
+        <tbody>
+          <tr><td>全球安全接入</td><td>Global Accelerator + WAF + ALB</td><td>就近接入、攻击防护、TLS 终止与健康路由分层</td><td>身份级限流、业务授权和幂等</td></tr>
+          <tr><td>容器生命周期</td><td>ACK Managed Pro + ACR</td><td>保留 Kubernetes/OCI 标准，同时减少控制面、镜像与云网络运维</td><td>容量基线、PDB/HPA、健康检查与优雅终止</td></tr>
+          <tr><td>账本权威与事务一致</td><td>OceanBase</td><td>参考设计需要分布式 ACID、强一致、多副本与恢复能力</td><td>复式记账、唯一约束、事务边界与恢复后对账</td></tr>
+          <tr><td>低延迟短期控制</td><td>Tair</td><td>Redis 协议兼容，适合幂等预留、频率状态和缓存</td><td>不能把 Tair 当账本权威，缓存丢失后仍要正确</td></tr>
+          <tr><td>事件解耦与相对顺序</td><td>ApsaraMQ for RocketMQ</td><td>按交易 ID 分片保留同业务键的相对顺序，具备重试、DLQ 和轨迹能力</td><td>outbox 防 DB/消息缺口，inbox 保证重投安全</td></tr>
+          <tr><td>实时风控特征</td><td>Realtime Compute for Flink + Hologres</td><td>Flink 处理事件时间、窗口和检查点；Hologres 承接鲜活数据的实时写入与在线查询</td><td>迟到数据策略、特征版本、血缘与训练/服务一致</td></tr>
+          <tr><td>受治理模型推理</td><td>Model Studio + PAI-EAS</td><td>模型接入与在线推理分层，支持镜像、资源弹性、灰度和监控的生产映射</td><td>评测、规则降级、工具权限、审批和模型版本证据</td></tr>
+          <tr><td>身份、密钥与证据</td><td>RAM/RRSA/KMS + SLS/ARMS/Prometheus</td><td>短期工作负载身份、受托管密钥与日志/指标/追踪分层</td><td>最小权限、脱敏、保留策略、SLO 和告警责任</td></tr>
+        </tbody>
+      </table></div>
+      <div class="evidence-line"><strong>选型方法</strong><span>每个产品都要回答五个问题：它解决哪个已确认 NFR？责任边界是什么？当前团队能否运维？三年 TCO 如何？如果区域不可用、成本失控或需要退出，标准接口和替代路径是什么？</span></div>
+      <section class="project-proof" style="margin-top:12px">
+        <span class="section-index">当前产品信息校验入口</span>
+        <h2>方案是参考映射，不是已购买的云环境。</h2>
+        <p>FinCloud Sentinel 当前通过 Docker、Helm 和 Terraform 表达生产映射，GitHub Pages 不连接真实阿里云资源。实际方案冻结前要再核对官方区域、版本、限制与计费。</p>
+        <div class="official-links">
+          <a href="https://www.alibabacloud.com/help/en/ack/product-overview/product-introduction" target="_blank" rel="noreferrer">ACK 官方概览</a>
+          <a href="https://www.alibabacloud.com/help/en/redis/product-overview/what-is-apsaradb-for-redis" target="_blank" rel="noreferrer">Tair 官方概览</a>
+          <a href="https://www.alibabacloud.com/help/en/apsaramq-for-rocketmq/cloud-message-queue-rocketmq-4-x-series/developer-reference/ordered-messages" target="_blank" rel="noreferrer">RocketMQ 有序消息</a>
+          <a href="https://www.alibabacloud.com/help/en/flink/realtime-flink/product-overview/what-is-alibaba-cloud-realtime-compute-for-apache-flink" target="_blank" rel="noreferrer">Flink 官方概览</a>
+          <a href="https://www.alibabacloud.com/help/en/hologres/product-overview/what-is-hologres" target="_blank" rel="noreferrer">Hologres 官方概览</a>
+          <a href="https://www.alibabacloud.com/help/en/pai/overview-2" target="_blank" rel="noreferrer">PAI-EAS 官方概览</a>
+          <a href="https://www.alibabacloud.com/help/en/arms/product-overview/what-is-arms" target="_blank" rel="noreferrer">ARMS 官方概览</a>
+        </div>
+      </section>
+      <div class="focus-script"><div class="script-box"><blockquote id="script-q5">“我不会先列一张阿里云产品清单，而是从工作负载和 NFR 倒推。交易账本需要强事务和持久约束，所以映射 OceanBase；短期幂等预留和频率状态选 Tair，但它永远不是账本权威；事件解耦用 RocketMQ，仍由 outbox/inbox 保证业务正确；实时特征用 Flink 与 Hologres；模型服务映射 Model Studio 与 PAI-EAS；容器运行时用 ACK。每个选型都要同时说明责任边界、当日区域和版本校验、三年 TCO 以及退出路径。”</blockquote><aside class="script-side"><span>答题关键</span><p>用“需求 → 产品 → 边界 → 替代”，而不是背产品手册。</p><button class="copy-button" data-copy="#script-q5">复制 Q5 口述稿</button></aside></div></div>
+    </section>
+
+    <section class="section reveal focus-section" id="q6">
+      <div class="section-head"><span class="section-index">Q6 / POC &amp; BUSINESS VALUE</span><h2>如何设计 POC 并证明商业价值？</h2><p>POC 不是免费做一个小型生产系统，也不是演示顺畅就算成功。它应该用最小成本验证最高不确定性，并支持 Go / Remediate / Stop 决策。</p></div>
+      <div class="focus-answer"><span>一句话结论</span><div><strong>先把客户决策写成可否证假设，用有权重的验收门禁验证资金正确、性能、安全、恢复和可运维性，保留原始证据，再把实测用量带入 TCO/ROI 和敏感性分析，得出可审批的投产结论。</strong><small>一旦出现重复资金效果、不平账、未审批 AI 动作、无法恢复数据或禁止数据泄露，即使总分很高也必须停止或重设计。</small></div></div>
+      <div class="flow">
+        <article class="flow-step"><span>STEP 01</span><h3>写决策假设</h3><p>例如：重试下仍只产生一次资金效果，并在预算内达到指定延迟。</p></article>
+        <article class="flow-step"><span>STEP 02</span><h3>冻结范围与基线</h3><p>明确一条合成交易、目标峰值、一个区域、排除项和当前指标。</p></article>
+        <article class="flow-step"><span>STEP 03</span><h3>先签验收门禁</h3><p>定义权重、临界值、关键否决项、证据格式和客户签字人。</p></article>
+        <article class="flow-step"><span>STEP 04</span><h3>注入真实失败</h3><p>测重试风暴、重投、金额不符、模型超时、提示注入、可用区与恢复。</p></article>
+        <article class="flow-step"><span>STEP 05</span><h3>从证据到商业决策</h3><p>用实测资源和人力计算 TCO、ROI、回本期，输出 Go / 整改 / 停止。</p></article>
+      </div>
+      <div class="compare-wrap" style="margin-top:12px"><table class="compare">
+        <thead><tr><th>关键门禁</th><th>FinCloud POC 通过条件</th><th>商业含义</th><th>证据</th></tr></thead>
+        <tbody>
+          <tr><td>幂等与账务</td><td>100 次并发/重放只有一笔交易与一次过账；借贷 100% 相等</td><td>避免重复资金损失与人工调账</td><td>原始请求、交易 ID、分录与不变量</td></tr>
+          <tr><td>对账与隔离</td><td>合成差异 ≤60 秒检出，审批后暂停最小影响通道</td><td>缩短资金异常暴露时间</td><td>对账 run ID、告警时间线与审批记录</td></tr>
+          <tr><td>AI 安全</td><td>模型超时 0 错误放行；无审批高影响工具执行为 0</td><td>在提高调查效率时不引入新的资金风险</td><td>故障注入、评测报告、工具审计</td></tr>
+          <tr><td>性能与恢复</td><td>约定负载下 p95 &lt;250 ms；恢复在 RPO/RTO 内且重开前对账</td><td>确认容量成本、用户体验与业务连续性</td><td>k6、监控导出、恢复时间线和签字</td></tr>
+          <tr><td>安全与可运维</td><td>无未解决高危/严重发布问题；指定操作员可独立执行 Runbook</td><td>避免交付后技术债务转嫁给客户</td><td>CodeQL/Trivy/Gitleaks、演练记录与交接清单</td></tr>
+        </tbody>
+      </table></div>
+      <div class="explain-grid">
+        <article class="explain-card"><span>TCO</span><h3>算全成本，不只算云费</h3><p>实施 + 迁移 + 三年云资源 + 运维 + 支持 + 退出储备，并计入非生产环境、容灾和数据传输。</p><code>3Y TCO = build + migrate + run + support + exit</code></article>
+        <article class="explain-card"><span>ROI</span><h3>收益要风险调整</h3><p>避免损失 = 事故次数 × 平均影响 × 预期降低 × 信心系数；同时计算减少 MTTR/人工调查的效率收益。</p><code>ROI = (benefit - TCO) / TCO</code></article>
+        <article class="explain-card"><span>SENSITIVITY</span><h3>不用单一乐观数字</h3><p>用低负载/高保留的下行情景、基准情景和高负载/优化资源的上行情景，展示结论对假设有多敏感。</p><code>downside / base / upside</code></article>
+      </div>
+      <div class="evidence-line"><strong>项目证据</strong><span>仓库已有 12 项加权 POC 计分卡：所有关键门禁必须通过，且总分至少 85/100 才能 Go。项目还包含客户输入、云成本、人员/运维、风险调整收益、现金流与敏感性分开的 TCO 模型；示例值不是阿里云报价。</span></div>
+      <div class="focus-script"><div class="script-box"><blockquote id="script-q6">“我会先把 POC 定义成一个可否证的决策假设，而不是一次产品演示。范围只覆盖最高风险的合成交易闭环，在开发前就与客户签定权重、关键否决项和证据格式。我会主动注入重试风暴、消息重投、对账差异、模型超时、提示注入和恢复故障，保存原始指标、日志、追踪和配置摘要。最后用实测用量计算三年 TCO，用风险调整的避免损失、减少 MTTR 和释放人工工时计算 ROI，再通过上下行敏感性给出 Go、整改重测或停止结论。”</blockquote><aside class="script-side"><span>答题关键</span><p>先证明“值得决策”，不是先证明“技术能跑”。</p><button class="copy-button" data-copy="#script-q6">复制 Q6 口述稿</button></aside></div></div>
+    </section>
+
+    <section class="section reveal">
+      <div class="practice" data-practice>
+        <div class="practice-copy"><h3>六问面试自检</h3><p>不看页面，每题用“结论、设计、取舍、证据”四步讲完。进度只保存在当前浏览器。</p><div class="progress"><div class="progress-label"><span>掌握进度</span><span data-progress-text>0/6</span></div><div class="progress-track"><i data-progress></i></div></div></div>
+        <div class="checklist">
+          <label><input type="checkbox" /><b>✓</b><span>能说明为什么持久唯一约束比分布式锁更根本。</span></label>
+          <label><input type="checkbox" /><b>✓</b><span>能画出“业务—账本—外部结算”三层对账。</span></label>
+          <label><input type="checkbox" /><b>✓</b><span>能从 BIA 倒推 RTO/RPO，并说出恢复后为什么还要对账。</span></label>
+          <label><input type="checkbox" /><b>✓</b><span>能区分幻觉、提示注入、数据泄露和工具越权的控制。</span></label>
+          <label><input type="checkbox" /><b>✓</b><span>能用“需求—产品—边界—替代”解释阿里云选型。</span></label>
+          <label><input type="checkbox" /><b>✓</b><span>能用关键门禁、加权计分、TCO/ROI 和敏感性说明 POC 决策。</span></label>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="page-footer">
+    <div class="pager"><a href="./05-engineering-evidence.html"><span>← 上一篇</span><strong>工程质量与证据</strong></a><a href="./index.html"><span>返回→</span><strong>五项能力讲解总目录</strong></a></div>
+    <div class="footer-note"><span>FinCloud Sentinel · 六个重点面试问题</span><span>所有 NFR 和产品映射均需在客户环境再验证</span></div>
+  </footer>
+</body>
+</html>
