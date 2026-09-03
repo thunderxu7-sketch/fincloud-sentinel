@@ -33,6 +33,6 @@
     "@playwright/test": "^1.62.1",
     "@redocly/cli": "^2.48.0",
     "concurrently": "^9.2.1",
-    "eslint": "^9.39.5"
+    "eslint": "^10.9.1"
   }
 }
