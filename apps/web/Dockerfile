@@ -1,4 +1,4 @@
-FROM node:22.23-alpine AS build
+FROM node:26.8-alpine AS build
 WORKDIR /workspace
 COPY package.json package-lock.json tsconfig.base.json ./
 COPY packages/domain/package.json packages/domain/package.json
