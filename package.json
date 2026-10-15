@@ -30,8 +30,8 @@
     "check": "npm run lint && npm run typecheck && npm run test && npm run test:python && npm run eval && npm run docs:check && npm run guides:check && npm run api:lint && npm run build"
   },
   "devDependencies": {
-    "@playwright/test": "^1.62.1",
-    "@redocly/cli": "^2.48.0",
+    "@playwright/test": "^1.64.0",
+    "@redocly/cli": "^2.62.1",
     "concurrently": "^9.2.1",
     "eslint": "^9.39.5"
   }
